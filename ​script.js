@@ -857,3 +857,4 @@ window.switchTab = function (viewId, navBtn = null) {
   if (viewId === "messages-view") loadMessagesUsers();
   if (viewId === "notifications-view") loadNotifications();
 };
+  
