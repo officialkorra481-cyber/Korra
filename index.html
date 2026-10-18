@@ -2,359 +2,266 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Koraa — Connect • Share • Be You</title>
-  <!-- Icons & Fonts -->
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Koraa - Connect & Share</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    /* Netlify Badge/Logo Hide Fix */
-    #netlify-badge, a[href*="netlify.com"], div:has(> a[href*="netlify.com"]) {
-      display: none !important;
-      opacity: 0 !important;
-      visibility: hidden !important;
-      pointer-events: none !important;
-    }
-  </style>
+  <!-- Remix Icons for UI -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
 <body>
 
-  <div class="app-container">
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="toast"></div>
 
-    <!-- 1. SPLASH SCREEN -->
-    <div id="splash-screen" class="screen active">
-      <div class="splash-content">
-        <div class="k-logo-glow">K</div>
-        <h1 class="brand-title">Koraa</h1>
-        <p class="brand-tagline">Connect • Share • Be You</p>
+  <!-- 1. SPLASH SCREEN -->
+  <div id="splash-screen" class="screen active">
+    <div class="splash-content">
+      <h1 class="logo-text">Koraa</h1>
+      <p>Explore your world, together.</p>
+    </div>
+  </div>
+
+  <!-- 2. ONBOARDING SCREEN -->
+  <div id="onboarding-screen" class="screen">
+    <div class="onboarding-container">
+      <div class="ob-slide">
+        <h2 id="ob-title">Welcome to Koraa</h2>
+        <p id="ob-desc">Share your best moments, connect with friends, and discover amazing reels & posts.</p>
+      </div>
+      <div class="dots">
+        <span id="dot-1" class="dot active"></span>
+        <span id="dot-2" class="dot"></span>
+      </div>
+      <button class="primary-btn" onclick="nextOnboarding()">Next</button>
+    </div>
+  </div>
+
+  <!-- 3. AUTH SCREEN (LOGIN / SIGNUP) -->
+  <div id="auth-screen" class="screen">
+    <div class="auth-container">
+      <h1 class="auth-logo">Koraa</h1>
+
+      <!-- LOGIN BOX -->
+      <div id="login-form-box" class="form-box">
+        <input type="email" id="login-email" placeholder="Phone number, username, or email">
+        <input type="password" id="login-password" placeholder="Password">
+        <button id="login-submit-btn" class="primary-btn">Log In</button>
+        <p class="switch-text">Don't have an account? <span onclick="toggleAuth('signup')">Sign up</span></p>
+      </div>
+
+      <!-- SIGNUP BOX -->
+      <div id="signup-form-box" class="form-box hidden">
+        <input type="text" id="signup-name" placeholder="Full Name">
+        <input type="text" id="signup-username" placeholder="Username">
+        <input type="email" id="signup-email" placeholder="Email address">
+        <input type="password" id="signup-password" placeholder="Password (min 6 chars)">
+        <button id="signup-submit-btn" class="primary-btn">Sign Up</button>
+        <p class="switch-text">Have an account? <span onclick="toggleAuth('login')">Log in</span></p>
       </div>
     </div>
+  </div>
 
-    <!-- 2. ONBOARDING SCREEN -->
-    <div id="onboarding-screen" class="screen">
-      <div class="onboarding-card">
-        <div class="ob-image-box" id="ob-img">
-          <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80" alt="Koraa World">
-        </div>
-        <div class="ob-text-box">
-          <h2 id="ob-title">Share Your World</h2>
-          <p id="ob-desc">Post your moments, thoughts and passions with the world in a dark, premium experience.</p>
-          <div class="ob-dots">
-            <span class="dot active" id="dot-1"></span>
-            <span class="dot" id="dot-2"></span>
+  <!-- 4. MAIN APP CONTAINER -->
+  <div id="main-app" class="screen">
+    
+    <!-- TOP HEADER -->
+    <header class="top-header">
+      <h2 class="app-logo">Koraa</h2>
+      <div class="header-icons">
+        <i class="ri-heart-3-line" onclick="switchTab('notifications-view')"></i>
+        <i class="ri-messenger-line" onclick="switchTab('messages-view')"></i>
+      </div>
+    </header>
+
+    <!-- TAB VIEWS CONTAINER -->
+    <main class="main-content-area">
+
+      <!-- HOME FEED VIEW -->
+      <div id="home-view" class="tab-view active">
+        <!-- Stories Strip -->
+        <div class="stories-strip" id="stories-container">
+          <div class="story-item my-story" onclick="openStoryUpload()">
+            <div class="story-ring plus"><img id="my-story-avatar" src="" alt="My Story"></div>
+            <span>Your Story</span>
           </div>
-          <button class="btn-gradient" id="ob-next-btn" onclick="nextOnboarding()">Next</button>
+        </div>
+        <!-- Feed Posts Container -->
+        <div id="feed-container">
+          <div class="loader">Loading posts...</div>
         </div>
       </div>
-    </div>
 
-    <!-- 3. AUTH SCREEN (LOGIN & SIGN UP) -->
-    <div id="auth-screen" class="screen">
-      <div class="auth-box">
-        <div class="k-logo-small">K</div>
-        <h2 class="auth-brand">Koraa</h2>
-
-        <!-- Login Form -->
-        <div id="login-form-box">
-          <h3 class="auth-heading">Welcome Back</h3>
-          <p class="auth-sub">Log in to continue</p>
-          <div class="input-group">
-            <i class="ri-mail-line"></i>
-            <input type="email" id="login-email" placeholder="Email Address">
-          </div>
-          <div class="input-group">
-            <i class="ri-lock-2-line"></i>
-            <input type="password" id="login-password" placeholder="Password">
-          </div>
-          <button class="btn-gradient" onclick="handleLogin()">Log In</button>
-          <p class="switch-auth">Don't have an account? <span onclick="toggleAuth('signup')">Sign Up</span></p>
+      <!-- EXPLORE VIEW -->
+      <div id="explore-view" class="tab-view">
+        <div class="search-box-wrapper">
+          <i class="ri-search-line"></i>
+          <input type="text" id="search-input" placeholder="Search users..." oninput="handleSearch(this.value)">
         </div>
-
-        <!-- Sign Up Form -->
-        <div id="signup-form-box" class="hidden">
-          <h3 class="auth-heading">Create Account</h3>
-          <p class="auth-sub">Join Koraa and be a part of something amazing</p>
-          <div class="input-group">
-            <i class="ri-user-line"></i>
-            <input type="text" id="signup-name" placeholder="Full Name">
-          </div>
-          <div class="input-group">
-            <i class="ri-at-line"></i>
-            <input type="text" id="signup-username" placeholder="Username (e.g. tarun_rao)">
-          </div>
-          <div class="input-group">
-            <i class="ri-mail-line"></i>
-            <input type="email" id="signup-email" placeholder="Email Address">
-          </div>
-          <div class="input-group">
-            <i class="ri-lock-2-line"></i>
-            <input type="password" id="signup-password" placeholder="Password (min 6 chars)">
-          </div>
-          <button class="btn-gradient" onclick="handleSignup()">Sign Up</button>
-          <p class="switch-auth">Already have an account? <span onclick="toggleAuth('login')">Log In</span></p>
-        </div>
+        <div id="search-results-users" class="search-results-box hidden"></div>
+        <div class="explore-grid" id="explore-grid"></div>
       </div>
-    </div>
 
-    <!-- 4. MAIN APP WRAPPER (Post-Login) -->
-    <div id="main-app" class="screen">
+      <!-- REELS VIEW -->
+      <div id="reels-view" class="tab-view">
+        <div id="reels-container" class="reels-feed"></div>
+      </div>
 
-      <!-- TOP HEADER -->
-      <header class="app-header" id="main-header">
-        <div class="header-left">
-          <span class="k-badge">K</span>
-          <span class="header-title">Koraa</span>
-        </div>
-        <div class="header-right">
-          <button class="icon-btn" onclick="switchTab('notifications-view')"><i class="ri-heart-3-line"></i></button>
-          <button class="icon-btn" onclick="switchTab('messages-view')"><i class="ri-messenger-line"></i></button>
-        </div>
-      </header>
-
-      <!-- VIEWPORT AREA -->
-      <main class="app-viewport">
-
-        <!-- A. HOME FEED VIEW -->
-        <section id="home-view" class="tab-view active">
-          <div class="stories-strip" id="stories-container">
-            <div class="story-item" onclick="openStoryUpload()">
-              <div class="story-ring add-story">
-                <img id="my-story-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Koraa" alt="Me">
-                <span class="plus-badge">+</span>
-              </div>
-              <span>Your Story</span>
-            </div>
+      <!-- UPLOAD VIEW -->
+      <div id="upload-view" class="tab-view">
+        <div class="upload-box">
+          <h3>Create New Post / Reel</h3>
+          <div class="post-type-selector">
+            <button id="type-post-btn" class="type-btn active" onclick="setPostType('post')">Post</button>
+            <button id="type-reel-btn" class="type-btn" onclick="setPostType('reel')">Reel</button>
           </div>
-          <div id="feed-container" class="feed-list">
-            <div class="loader">Loading Koraa feed...</div>
-          </div>
-        </section>
-
-        <!-- B. SEARCH & EXPLORE VIEW -->
-        <section id="explore-view" class="tab-view">
-          <div class="search-bar-box">
-            <i class="ri-search-line"></i>
-            <input type="text" id="search-input" placeholder="Search users, #hashtags..." oninput="handleSearch(this.value)">
-          </div>
-          <div class="filter-pills">
-            <span class="pill active">For You</span>
-            <span class="pill">Trending</span>
-            <span class="pill">People</span>
-          </div>
-          <div id="search-results-users" class="user-list hidden"></div>
-          <div id="explore-grid" class="explore-grid"></div>
-        </section>
-
-        <!-- C. CREATE POST / REEL VIEW -->
-        <section id="create-view" class="tab-view">
-          <div class="section-top-bar">
-            <h3>New Post / Reel</h3>
-          </div>
-          <div class="create-box">
-            <div class="post-type-selector">
-              <button class="type-btn active" id="type-post-btn" onclick="setPostType('post')">Photo Post</button>
-              <button class="type-btn" id="type-reel-btn" onclick="setPostType('reel')">Short Reel</button>
-            </div>
-
-            <label class="file-picker-box" for="post-file-input">
-              <i class="ri-image-add-line"></i>
-              <span>Select Photo from Phone Gallery</span>
-              <input type="file" id="post-file-input" accept="image/*" onchange="previewSelectedImage(event)" hidden>
+          
+          <div class="file-pick-area">
+            <label class="file-label" for="media-file-input">
+              <i class="ri-image-add-line"></i> Choose from Gallery
             </label>
+            <input type="file" id="media-file-input" accept="image/*,video/*" onchange="previewSelectedImage(event)" style="display:none;">
+          </div>
+          <div class="url-input-wrap">
+            <input type="text" id="post-media-url" placeholder="Or Paste Image/Video URL here...">
+            <button onclick="previewUrlMedia(document.getElementById('post-media-url').value)">Load URL</button>
+          </div>
 
-            <div class="or-divider"><span>OR PASTE IMAGE / VIDEO URL</span></div>
-
-            <div class="input-group">
-              <i class="ri-link"></i>
-              <input type="url" id="post-media-url" placeholder="Paste direct image or .mp4 video URL" oninput="previewUrlMedia(this.value)">
-            </div>
-
-            <div id="media-preview-box" class="preview-box hidden">
-              <img id="image-preview" src="" alt="Preview">
-            </div>
-
+          <div id="media-preview-box" class="media-preview-box hidden">
+            <img id="image-preview" alt="Preview">
+            <!-- Filter Options -->
             <div class="filter-strip">
-              <span onclick="applyFilter('none')" class="filter-chip active">Normal</span>
-              <span onclick="applyFilter('contrast(1.2) saturate(1.3)')" class="filter-chip">Clarendon</span>
-              <span onclick="applyFilter('grayscale(1) contrast(1.1)')" class="filter-chip">Moon</span>
-              <span onclick="applyFilter('sepia(0.35) contrast(1.05)')" class="filter-chip">Warm</span>
-            </div>
-
-            <textarea id="post-caption" rows="3" placeholder="Write a caption... use #hashtags (e.g. #travel #nature)"></textarea>
-            
-            <div class="input-group">
-              <i class="ri-map-pin-line"></i>
-              <input type="text" id="post-location" placeholder="Add Location (Optional)">
-            </div>
-
-            <button class="btn-gradient" id="publish-btn" onclick="publishPost()">Share Now</button>
-          </div>
-        </section>
-
-        <!-- D. REELS VIEW -->
-        <section id="reels-view" class="tab-view">
-          <div id="reels-container" class="reels-scroller"></div>
-        </section>
-
-        <!-- E. NOTIFICATIONS VIEW -->
-        <section id="notifications-view" class="tab-view">
-          <div class="section-top-bar">
-            <button class="icon-btn" onclick="switchTab('home-view')"><i class="ri-arrow-left-line"></i></button>
-            <h3>Notifications</h3>
-          </div>
-          <div id="notifications-list" class="notif-list"></div>
-        </section>
-
-        <!-- F. MESSAGES / CHAT LIST VIEW -->
-        <section id="messages-view" class="tab-view">
-          <div class="section-top-bar">
-            <button class="icon-btn" onclick="switchTab('home-view')"><i class="ri-arrow-left-line"></i></button>
-            <h3>Messages</h3>
-          </div>
-          <div id="chat-users-list" class="user-list"></div>
-        </section>
-
-        <!-- G. ONE-TO-ONE LIVE CHAT ROOM -->
-        <section id="chat-room-view" class="tab-view">
-          <div class="chat-header">
-            <button class="icon-btn" onclick="switchTab('messages-view')"><i class="ri-arrow-left-line"></i></button>
-            <img id="chat-partner-avatar" src="" alt="User">
-            <div>
-              <h4 id="chat-partner-name">User</h4>
-              <span class="online-dot">Active on Koraa</span>
+              <button onclick="applyFilter('none')">Normal</button>
+              <button onclick="applyFilter('grayscale(100%)')">B&W</button>
+              <button onclick="applyFilter('sepia(100%)')">Sepia</button>
+              <button onclick="applyFilter('contrast(150%)')">Vivid</button>
             </div>
           </div>
-          <div id="chat-messages-box" class="chat-messages"></div>
-          <div class="chat-input-bar">
-            <input type="text" id="chat-msg-input" placeholder="Type a message...">
-            <button class="btn-send" onclick="sendChatMessage()"><i class="ri-send-plane-2-fill"></i></button>
-          </div>
-        </section>
 
-        <!-- H. PROFILE VIEW -->
-        <section id="profile-view" class="tab-view">
-          <div class="profile-top">
-            <div class="profile-header-row">
-              <img id="profile-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Koraa" alt="Avatar">
-              <div class="profile-stats">
-                <div><strong id="stat-posts">0</strong><span>Posts</span></div>
-                <div><strong id="stat-followers">0</strong><span>Followers</span></div>
-                <div><strong id="stat-following">0</strong><span>Following</span></div>
-              </div>
-            </div>
-            <div class="profile-bio-box">
-              <h3 id="profile-fullname">User Name</h3>
-              <p class="profile-handle" id="profile-username">@username</p>
-              <p id="profile-bio">Dreamer | Creator • Good Vibes Only ✨</p>
-            </div>
-            <div class="profile-actions" id="my-profile-actions">
-              <button class="btn-outline" onclick="openEditProfile()">Edit Profile</button>
-              <button class="btn-outline" onclick="showSavedPosts()">Saved</button>
-              <button class="btn-outline danger" onclick="handleLogout()"><i class="ri-logout-box-r-line"></i></button>
-            </div>
-            <div class="profile-actions hidden" id="other-profile-actions">
-              <button class="btn-gradient" id="follow-toggle-btn" onclick="toggleFollowUser()">Follow</button>
-              <button class="btn-outline" id="msg-user-btn">Message</button>
-              <button class="btn-outline danger" onclick="blockOrReportUser()"><i class="ri-shield-user-line"></i> Block/Report</button>
-            </div>
-          </div>
-          <div id="profile-posts-grid" class="explore-grid"></div>
-        </section>
-
-      </main>
-
-      <!-- BOTTOM NAVIGATION BAR -->
-      <nav class="bottom-nav">
-        <button class="nav-item active" onclick="switchTab('home-view', this)">
-          <i class="ri-home-5-line"></i>
-          <span>Home</span>
-        </button>
-        <button class="nav-item" onclick="switchTab('explore-view', this)">
-          <i class="ri-search-2-line"></i>
-          <span>Search</span>
-        </button>
-        <button class="nav-item add-post-nav" onclick="switchTab('create-view', this)">
-          <div class="nav-plus-btn"><i class="ri-add-line"></i></div>
-        </button>
-        <button class="nav-item" onclick="switchTab('reels-view', this)">
-          <i class="ri-clapperboard-line"></i>
-          <span>Reels</span>
-        </button>
-        <button class="nav-item" onclick="openMyProfile(this)">
-          <i class="ri-user-3-line"></i>
-          <span>Profile</span>
-        </button>
-      </nav>
-
-    </div>
-
-    <!-- MODALS -->
-    <div id="comments-modal" class="modal hidden">
-      <div class="modal-sheet">
-        <div class="modal-header">
-          <h4>Comments</h4>
-          <button class="icon-btn" onclick="closeCommentsModal()"><i class="ri-close-line"></i></button>
+          <input type="text" id="post-caption" placeholder="Write a caption or use #hashtags...">
+          <input type="text" id="post-location" placeholder="Add location...">
+          <button id="publish-btn" class="primary-btn" onclick="publishPost()">Share Now</button>
         </div>
-        <div id="comments-list" class="comments-list"></div>
+      </div>
+
+      <!-- PROFILE VIEW -->
+      <div id="profile-view" class="tab-view">
+        <div class="profile-header-card">
+          <img id="profile-avatar" src="" alt="Avatar">
+          <div class="profile-info-col">
+            <h3 id="profile-fullname">Loading...</h3>
+            <span id="profile-username" class="username-tag">@username</span>
+            <p id="profile-bio"></p>
+          </div>
+        </div>
+
+        <div class="profile-stats-row">
+          <div><h4 id="stat-posts">0</h4><span>Posts</span></div>
+          <div><h4 id="stat-followers">0</h4><span>Followers</span></div>
+          <div><h4 id="stat-following">0</h4><span>Following</span></div>
+        </div>
+
+        <!-- Action Buttons (Self vs Other) -->
+        <div id="my-profile-actions" class="profile-action-btns">
+          <button onclick="openEditProfile()">Edit Profile</button>
+          <button onclick="showSavedPosts()">Saved Posts</button>
+          <button onclick="handleLogout()" class="danger-txt">Log Out</button>
+        </div>
+        <div id="other-profile-actions" class="profile-action-btns hidden">
+          <button id="follow-toggle-btn" class="primary-btn" onclick="toggleFollowUser()">Follow</button>
+          <button id="msg-user-btn" class="secondary-btn">Message</button>
+          <button onclick="blockOrReportUser()" class="icon-btn-danger"><i class="ri-error-warning-line"></i></button>
+        </div>
+
+        <!-- User Posts Grid -->
+        <div class="profile-grid" id="profile-posts-grid"></div>
+      </div>
+
+      <!-- CHAT LIST VIEW -->
+      <div id="messages-view" class="tab-view">
+        <h3 class="section-title">Messages</h3>
+        <div id="chat-users-list" class="chat-users-list"></div>
+      </div>
+
+      <!-- DIRECT CHAT ROOM VIEW -->
+      <div id="chat-room-view" class="tab-view">
+        <div class="chat-room-header">
+          <i class="ri-arrow-left-line" onclick="switchTab('messages-view')"></i>
+          <img id="chat-partner-avatar" src="" alt="">
+          <h4 id="chat-partner-name">Chat</h4>
+        </div>
+        <div id="chat-messages-box" class="chat-messages-box"></div>
         <div class="chat-input-bar">
-          <input type="text" id="comment-input" placeholder="Add a comment...">
-          <button class="btn-send" onclick="submitComment()">Post</button>
+          <input type="text" id="chat-msg-input" placeholder="Type a message...">
+          <button onclick="sendChatMessage()"><i class="ri-send-plane-fill"></i></button>
         </div>
       </div>
-    </div>
 
-    <div id="edit-profile-modal" class="modal hidden">
-      <div class="modal-sheet">
-        <div class="modal-header">
-          <h4>Edit Profile</h4>
-          <button class="icon-btn" onclick="closeEditProfile()"><i class="ri-close-line"></i></button>
-        </div>
-        <div class="modal-body">
-          <label class="file-picker-box small-picker" for="avatar-file-input">
-            <i class="ri-camera-switch-line"></i>
-            <span>Choose Profile Photo from Gallery</span>
-            <input type="file" id="avatar-file-input" accept="image/*" onchange="previewAvatarFile(event)" hidden>
-          </label>
-          <div class="input-group">
-            <i class="ri-user-line"></i>
-            <input type="text" id="edit-name" placeholder="Full Name">
-          </div>
-          <div class="input-group">
-            <i class="ri-quill-pen-line"></i>
-            <input type="text" id="edit-bio" placeholder="Your Bio">
-          </div>
-          <button class="btn-gradient" onclick="saveProfileChanges()">Save Changes</button>
-        </div>
+      <!-- NOTIFICATIONS VIEW -->
+      <div id="notifications-view" class="tab-view">
+        <h3 class="section-title">Notifications</h3>
+        <div id="notifications-list" class="notifications-list"></div>
       </div>
-    </div>
 
-    <div id="story-modal" class="modal hidden">
-      <div class="story-viewer-box">
-        <div class="story-top-info">
-          <span id="story-user-title">@user</span>
-          <button class="icon-btn" onclick="closeStoryModal()"><i class="ri-close-line"></i></button>
-        </div>
-        <img id="story-full-img" src="" alt="Story">
-      </div>
-    </div>
+    </main>
 
-    <div id="toast" class="toast">Action successful</div>
+    <!-- BOTTOM NAVIGATION BAR -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="switchTab('home-view', this)"><i class="ri-home-4-fill"></i></button>
+      <button class="nav-item" onclick="switchTab('explore-view', this)"><i class="ri-search-line"></i></button>
+      <button class="nav-item" onclick="switchTab('upload-view', this)"><i class="ri-add-box-line"></i></button>
+      <button class="nav-item" onclick="switchTab('reels-view', this)"><i class="ri-clapperboard-line"></i></button>
+      <button class="nav-item" onclick="openMyProfile(this)"><i class="ri-user-3-line"></i></button>
+    </nav>
 
   </div>
 
-  <!-- Safety Fallback Script to prevent splash screen freeze -->
-  <script>
-    setTimeout(() => {
-      const splash = document.getElementById('splash-screen');
-      if (splash && splash.classList.contains('active')) {
-        splash.classList.remove('active');
-        const auth = document.getElementById('auth-screen');
-        if (auth) auth.classList.add('active');
-      }
-    }, 3500);
-  </script>
+  <!-- MODALS -->
+  <!-- Comments Modal -->
+  <div id="comments-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h4>Comments</h4>
+        <i class="ri-close-line" onclick="closeCommentsModal()"></i>
+      </div>
+      <div id="comments-list" class="modal-body-list"></div>
+      <div class="modal-input-bar">
+        <input type="text" id="comment-input" placeholder="Add a comment...">
+        <button onclick="submitComment()">Post</button>
+      </div>
+    </div>
+  </div>
 
+  <!-- Edit Profile Modal -->
+  <div id="edit-profile-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h4>Edit Profile</h4>
+        <i class="ri-close-line" onclick="closeEditProfile()"></i>
+      </div>
+      <div class="modal-body-form">
+        <label>Change Profile Photo:</label>
+        <input type="file" accept="image/*" onchange="previewAvatarFile(event)">
+        <input type="text" id="edit-name" placeholder="Full Name">
+        <textarea id="edit-bio" placeholder="Bio..."></textarea>
+        <button class="primary-btn" onclick="saveProfileChanges()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Story View Modal -->
+  <div id="story-modal" class="modal-backdrop story-backdrop hidden">
+    <div class="story-viewer-card">
+      <div class="story-header">
+        <h4 id="story-user-title">@user</h4>
+        <i class="ri-close-line" onclick="closeStoryModal()"></i>
+      </div>
+      <div class="story-img-wrap">
+        <img id="story-full-img" alt="Story">
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Script Module Link -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
