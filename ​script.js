@@ -50,14 +50,12 @@ let allPostsCache = [];
 
 let obStep = 1;
 
+// DOM LOADED & EVENT BINDINGS
 window.addEventListener("DOMContentLoaded", () => {
-  const loginSubmitBtn = document.getElementById("login-submit-btn");
-  if (loginSubmitBtn) loginSubmitBtn.addEventListener("click", handleLogin);
-
-  const signupSubmitBtn = document.getElementById("signup-submit-btn");
-  if (signupSubmitBtn) signupSubmitBtn.addEventListener("click", handleSignup);
-
   setTimeout(() => {
+    const splash = document.getElementById("splash-screen");
+    if (splash) splash.classList.remove("active");
+
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUser = user;
@@ -66,7 +64,7 @@ window.addEventListener("DOMContentLoaded", () => {
         initRealtimeFeed();
         loadStories();
       } else {
-        showScreen("onboarding-screen");
+        showScreen("auth-screen");
       }
     });
   }, 1800);
@@ -83,10 +81,12 @@ window.nextOnboarding = function () {
     obStep = 2;
     const titleEl = document.getElementById("ob-title");
     const descEl = document.getElementById("ob-desc");
+    const imgEl = document.getElementById("ob-img");
     const dot1 = document.getElementById("dot-1");
     const dot2 = document.getElementById("dot-2");
-    if (titleEl) titleEl.innerText = "Discover New People";
-    if (descEl) descEl.innerText = "Follow creators, explore amazing content, reels and be part of the Koraa community.";
+    if (titleEl) titleEl.innerText = "Connect & Chat";
+    if (descEl) descEl.innerText = "Follow your friends, chat live in real-time, and explore trending reels.";
+    if (imgEl) imgEl.querySelector("img").src = "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&auto=format&fit=crop&q=80";
     if (dot1) dot1.classList.remove("active");
     if (dot2) dot2.classList.add("active");
   } else {
@@ -114,7 +114,7 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove("show"), 2600);
 }
 
-async function handleSignup() {
+window.handleSignup = async function () {
   const nameEl = document.getElementById("signup-name");
   const usernameEl = document.getElementById("signup-username");
   const emailEl = document.getElementById("signup-email");
@@ -128,7 +128,7 @@ async function handleSignup() {
   const pass = passEl.value;
 
   if (!name || !username || !email || pass.length < 6) {
-    return showToast("Sabhi boxes bharein (Password min 6 chars)");
+    return showToast("Please fill all fields (Password min 6 chars)");
   }
 
   try {
@@ -153,24 +153,24 @@ async function handleSignup() {
   } catch (err) {
     showToast(err.message);
   }
-}
+};
 
-async function handleLogin() {
+window.handleLogin = async function () {
   const emailEl = document.getElementById("login-email");
   const passEl = document.getElementById("login-password");
   if (!emailEl || !passEl) return;
 
   const email = emailEl.value.trim();
   const pass = passEl.value;
-  if (!email || !pass) return showToast("Email aur Password daalein");
+  if (!email || !pass) return showToast("Enter email and password");
 
   try {
     await signInWithEmailAndPassword(auth, email, pass);
-    showToast("Logged in!");
+    showToast("Logged in successfully!");
   } catch (err) {
-    showToast("Galat Email ya Password!");
+    showToast("Invalid Email or Password!");
   }
-}
+};
 
 window.handleLogout = async function () {
   await signOut(auth);
@@ -230,7 +230,7 @@ function compressImageFile(file, maxWidth = 720, quality = 0.65) {
 window.previewSelectedImage = async function (event) {
   const file = event.target.files[0];
   if (!file) return;
-  showToast("Photo ready ho rahi hai...");
+  showToast("Preparing photo...");
   selectedMediaBase64 = await compressImageFile(file, 720, 0.65);
   const previewBox = document.getElementById("media-preview-box");
   const previewImg = document.getElementById("image-preview");
@@ -263,9 +263,7 @@ window.applyFilter = function (filterCss) {
 
 window.publishPost = async function () {
   if (!currentUser) return;
-  if (!currentUserData) {
-    await loadCurrentUserProfile();
-  }
+  if (!currentUserData) await loadCurrentUserProfile();
 
   const captionEl = document.getElementById("post-caption");
   const locationEl = document.getElementById("post-location");
@@ -273,7 +271,7 @@ window.publishPost = async function () {
   const location = locationEl ? locationEl.value.trim() : "";
 
   if (!selectedMediaBase64) {
-    return showToast("Pehle gallery se photo chunein ya URL daalein!");
+    return showToast("Please select a photo or paste a URL!");
   }
 
   const btn = document.getElementById("publish-btn");
@@ -309,7 +307,7 @@ window.publishPost = async function () {
     const previewBox = document.getElementById("media-preview-box");
     if (previewBox) previewBox.classList.add("hidden");
 
-    showToast("Post Live ho gayi!");
+    showToast("Post published successfully!");
     window.switchTab("home-view");
   } catch (e) {
     showToast("Error: " + e.message);
@@ -333,7 +331,7 @@ function initRealtimeFeed() {
     allPostsCache = [];
 
     if (snapshot.empty) {
-      if (feedBox) feedBox.innerHTML = `<div class="loader">Abhi koi post nahi hai. Neeche + button dabakar pehli post daalein!</div>`;
+      if (feedBox) feedBox.innerHTML = `<div class="loader">No posts yet. Tap + below to share!</div>`;
       return;
     }
 
@@ -419,8 +417,8 @@ function createPostCard(post) {
 
 function formatHashtags(text) {
   return text.replace(/#[a-z0-9_]+/gi, (match) => `<span class="hashtag">${match}</span>`);
-        }
-        window.toggleLike = async function (postId, ownerUid) {
+      }
+             window.toggleLike = async function (postId, ownerUid) {
   const postRef = doc(db, "posts", postId);
   const post = allPostsCache.find(p => p.id === postId);
   if (!post) return;
@@ -477,7 +475,7 @@ window.openCommentsModal = async function (postId, ownerUid) {
   const snap = await getDocs(q);
   list.innerHTML = "";
   if (snap.empty) {
-    list.innerHTML = `<p style="color:#8E92A4;text-align:center;">Abhi koi comment nahi hai.</p>`;
+    list.innerHTML = `<p style="color:#8E92A4;text-align:center;">No comments yet.</p>`;
   }
   snap.forEach(d => {
     const c = d.data();
@@ -528,7 +526,7 @@ window.openStoryUpload = function () {
     if (!file) return;
     if (!currentUserData) await loadCurrentUserProfile();
 
-    showToast("Story upload ho rahi hai...");
+    showToast("Uploading story...");
     const base64 = await compressImageFile(file, 600, 0.6);
     await addDoc(collection(db, "stories"), {
       uid: currentUser.uid,
@@ -537,7 +535,7 @@ window.openStoryUpload = function () {
       mediaUrl: base64,
       createdAt: serverTimestamp()
     });
-    showToast("Story lag gayi!");
+    showToast("Story posted!");
     loadStories();
   };
   input.click();
@@ -675,9 +673,7 @@ window.showSavedPosts = function () {
 let newAvatarBase64 = "";
 window.openEditProfile = async function () {
   if (!currentUser) return;
-  if (!currentUserData) {
-    await loadCurrentUserProfile();
-  }
+  if (!currentUserData) await loadCurrentUserProfile();
   const nameInput = document.getElementById("edit-name");
   const bioInput = document.getElementById("edit-bio");
   if (nameInput) nameInput.value = currentUserData?.name || "";
@@ -695,7 +691,7 @@ window.previewAvatarFile = async function (e) {
   const file = e.target.files[0];
   if (!file) return;
   newAvatarBase64 = await compressImageFile(file, 300, 0.7);
-  showToast("Naya profile photo select ho gaya!");
+  showToast("Profile photo selected!");
 };
 
 window.saveProfileChanges = async function () {
@@ -713,7 +709,7 @@ window.saveProfileChanges = async function () {
     await loadCurrentUserProfile();
     window.closeEditProfile();
     window.openUserProfile(currentUser.uid);
-    showToast("Profile update ho gayi!");
+    showToast("Profile updated successfully!");
   } catch (err) {
     showToast("Error: " + err.message);
   }
@@ -746,9 +742,9 @@ window.handleSearch = async function (term) {
       const row = document.createElement("div");
       row.className = "user-row";
       row.innerHTML = `
-        <div class="user-row-left">
-          <img src="${u.avatar}">
-          <div><h4>${u.name}</h4><span style="color:#8E92A4;font-size:0.8rem;">@${u.username}</span></div>
+        <div class="user-row-left" style="display:flex;align-items:center;gap:10px;padding:8px;cursor:pointer;">
+          <img src="${u.avatar}" style="width:40px;height:40px;border-radius:50%;">
+          <div><h4 style="margin:0;color:#fff;">${u.name}</h4><span style="color:#8E92A4;font-size:0.8rem;">@${u.username}</span></div>
         </div>
       `;
       row.onclick = () => window.openUserProfile(u.uid);
@@ -768,11 +764,13 @@ async function loadMessagesUsers() {
     const row = document.createElement("div");
     row.className = "user-row";
     row.innerHTML = `
-      <div class="user-row-left">
-        <img src="${u.avatar}">
-        <div><h4>${u.username}</h4><span style="color:#8E92A4;font-size:0.78rem;">Tap to chat live</span></div>
+      <div class="user-row-left" style="display:flex;align-items:center;justify-content:space-between;padding:10px;cursor:pointer;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <img src="${u.avatar}" style="width:40px;height:40px;border-radius:50%;">
+          <div><h4 style="margin:0;color:#fff;">${u.username}</h4><span style="color:#8E92A4;font-size:0.78rem;">Tap to chat live</span></div>
+        </div>
+        <i class="ri-chat-smile-2-line" style="font-size:1.3rem;color:#9B51E0;"></i>
       </div>
-      <i class="ri-chat-smile-2-line" style="font-size:1.3rem;color:#9B51E0;"></i>
     `;
     row.onclick = () => startDirectChat(u);
     list.appendChild(row);
@@ -781,7 +779,7 @@ async function loadMessagesUsers() {
 
 function startDirectChat(partner) {
   activeChatPartner = partner;
-  const nameEl = document.getElementById("chat-manager-name") || document.getElementById("chat-partner-name");
+  const nameEl = document.getElementById("chat-partner-name");
   const avatarEl = document.getElementById("chat-partner-avatar");
   if (nameEl) nameEl.innerText = partner.username;
   if (avatarEl) avatarEl.src = partner.avatar;
@@ -831,11 +829,9 @@ async function loadNotifications() {
     const n = d.data();
     if (currentUser && n.toUid !== currentUser.uid) return;
     box.innerHTML += `
-      <div class="user-row">
-        <div class="user-row-left">
-          <img src="${n.fromAvatar}">
-          <div><strong>@${n.fromUsername}</strong> ${n.text}</div>
-        </div>
+      <div class="user-row" style="display:flex;align-items:center;gap:10px;padding:10px;">
+        <img src="${n.fromAvatar}" style="width:36px;height:36px;border-radius:50%;">
+        <div><strong>@${n.fromUsername}</strong> ${n.text}</div>
       </div>
     `;
   });
@@ -857,3 +853,4 @@ window.switchTab = function (viewId, navBtn = null) {
   if (viewId === "messages-view") loadMessagesUsers();
   if (viewId === "notifications-view") loadNotifications();
 };
+      
