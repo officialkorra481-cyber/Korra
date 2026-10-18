@@ -1,3 +1,4 @@
+// PART 1: Firebase Config, Auth, Feed & Post Functions
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getAuth,
@@ -109,7 +110,7 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove("show"), 2600);
 }
 
-// 3. AUTHENTICATION & PROFILE LOADER (With Safe Fallbacks)
+// 3. AUTHENTICATION & PROFILE LOADER
 window.handleSignup = async function () {
   const nameEl = document.getElementById("signup-name");
   const usernameEl = document.getElementById("signup-username");
@@ -195,7 +196,8 @@ async function loadCurrentUserProfile() {
   const myAvatar = document.getElementById("my-story-avatar");
   if (myAvatar && currentUserData.avatar) myAvatar.src = currentUserData.avatar;
 }
-// 4. ROBUST IMAGE COMPRESSOR & PREVIEW
+
+// 4. IMAGE COMPRESSOR & PREVIEW
 function compressImageFile(file, maxWidth = 720, quality = 0.65) {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -217,13 +219,9 @@ function compressImageFile(file, maxWidth = 720, quality = 0.65) {
         ctx.drawImage(img, 0, 0, w, h);
         resolve(canvas.toDataURL("image/jpeg", quality));
       };
-      img.onerror = () => {
-        resolve(e.target.result);
-      };
+      img.onerror = () => { resolve(e.target.result); };
     };
-    reader.onerror = () => {
-      resolve("");
-    };
+    reader.onerror = () => { resolve(""); };
   });
 }
 
@@ -261,7 +259,7 @@ window.applyFilter = function (filterCss) {
   if (previewImg) previewImg.style.filter = filterCss;
 };
 
-// 5. POSTS, REELS & FEED (Fixed Undefined Username Issue)
+// 5. POSTS, REELS & FEED
 window.publishPost = async function () {
   if (!currentUser) return;
   if (!currentUserData) {
@@ -286,7 +284,6 @@ window.publishPost = async function () {
   try {
     const finalUsername = currentUserData?.username || currentUser.email.split('@')[0] || "user";
     const finalAvatar = currentUserData?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser.uid}`;
-    
     const hashtags = (caption.match(/#[a-z0-9_]+/gi) || []).map(t => t.toLowerCase());
     
     await addDoc(collection(db, "posts"), {
@@ -312,7 +309,7 @@ window.publishPost = async function () {
     if (previewBox) previewBox.classList.add("hidden");
 
     showToast("Post Live ho gayi!");
-    switchTab("home-view");
+    window.switchTab("home-view");
   } catch (e) {
     showToast("Error: " + e.message);
   } finally {
@@ -350,7 +347,7 @@ function initRealtimeFeed() {
         const gridItem = document.createElement("div");
         gridItem.className = "grid-item";
         gridItem.innerHTML = `<img src="${post.mediaUrl}" style="filter:${post.filter || 'none'}" alt="Post">`;
-        gridItem.onclick = () => openUserProfile(post.uid);
+        gridItem.onclick = () => window.openUserProfile(post.uid);
         exploreBox.appendChild(gridItem);
       }
 
@@ -422,7 +419,7 @@ function createPostCard(post) {
 function formatHashtags(text) {
   return text.replace(/#[a-z0-9_]+/gi, (match) => `<span class="hashtag">${match}</span>`);
 }
-// 6. LIKES, COMMENTS, SAVES & SHARING
+// PART 2: Likes, Comments, Stories, Profile, Chat & Navigation
 window.toggleLike = async function (postId, ownerUid) {
   const postRef = doc(db, "posts", postId);
   const post = allPostsCache.find(p => p.id === postId);
@@ -519,10 +516,9 @@ window.submitComment = async function () {
   }
 
   input.value = "";
-  openCommentsModal(activeCommentPostId.postId, activeCommentPostId.ownerUid);
+  window.openCommentsModal(activeCommentPostId.postId, activeCommentPostId.ownerUid);
 };
 
-// 7. STORIES
 window.openStoryUpload = function () {
   const input = document.createElement("input");
   input.type = "file";
@@ -579,15 +575,15 @@ window.closeStoryModal = function () {
   const modal = document.getElementById("story-modal");
   if (modal) modal.classList.add("hidden");
 };
-// 8. PROFILE & EDIT PROFILE
+
 window.openMyProfile = function (navBtn) {
-  switchTab("profile-view", navBtn);
-  if (currentUser) openUserProfile(currentUser.uid);
+  window.switchTab("profile-view", navBtn);
+  if (currentUser) window.openUserProfile(currentUser.uid);
 };
 
 window.openUserProfile = async function (uid) {
   viewedProfileUid = uid;
-  switchTab("profile-view");
+  window.switchTab("profile-view");
   const snap = await getDoc(doc(db, "users", uid));
   if (!snap.exists()) return;
   const user = snap.data();
@@ -659,7 +655,7 @@ window.toggleFollowUser = async function () {
       createdAt: serverTimestamp()
     });
   }
-  openUserProfile(viewedProfileUid);
+  window.openUserProfile(viewedProfileUid);
 };
 
 window.showSavedPosts = function () {
@@ -715,8 +711,8 @@ window.saveProfileChanges = async function () {
   try {
     await setDoc(doc(db, "users", currentUser.uid), updates, { merge: true });
     await loadCurrentUserProfile();
-    closeEditProfile();
-    openUserProfile(currentUser.uid);
+    window.closeEditProfile();
+    window.openUserProfile(currentUser.uid);
     showToast("Profile update ho gayi!");
   } catch (err) {
     showToast("Error: " + err.message);
@@ -730,10 +726,9 @@ window.blockOrReportUser = async function () {
   });
   await loadCurrentUserProfile();
   showToast("User blocked & reported.");
-  switchTab("home-view");
+  window.switchTab("home-view");
 };
 
-// 9. SEARCH, CHAT & NOTIFICATIONS
 window.handleSearch = async function (term) {
   const qText = term.trim().toLowerCase();
   const userBox = document.getElementById("search-results-users");
@@ -756,7 +751,7 @@ window.handleSearch = async function (term) {
           <div><h4>${u.name}</h4><span style="color:#8E92A4;font-size:0.8rem;">@${u.username}</span></div>
         </div>
       `;
-      row.onclick = () => openUserProfile(u.uid);
+      row.onclick = () => window.openUserProfile(u.uid);
       userBox.appendChild(row);
     }
   });
@@ -790,7 +785,7 @@ function startDirectChat(partner) {
   const avatarEl = document.getElementById("chat-partner-avatar");
   if (nameEl) nameEl.innerText = partner.username;
   if (avatarEl) avatarEl.src = partner.avatar;
-  switchTab("chat-room-view");
+  window.switchTab("chat-room-view");
 
   const roomId = [currentUser.uid, partner.uid].sort().join("_");
   if (unsubscribeChat) unsubscribeChat();
