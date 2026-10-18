@@ -1,4 +1,3 @@
-// PART 1: Firebase Config, Auth, Feed & Post Functions
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getAuth,
@@ -24,7 +23,6 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// 1. FIREBASE CONFIG (korra-e92a3)
 const firebaseConfig = {
   apiKey: "AIzaSyD1SY_t_qQp8BJaoWFoprW60wDJadeUK6E",
   authDomain: "korra-e92a3.firebaseapp.com",
@@ -50,9 +48,15 @@ let activeChatPartner = null;
 let unsubscribeChat = null;
 let allPostsCache = [];
 
-// 2. SPLASH & ONBOARDING FLOW
 let obStep = 1;
+
 window.addEventListener("DOMContentLoaded", () => {
+  const loginSubmitBtn = document.getElementById("login-submit-btn");
+  if (loginSubmitBtn) loginSubmitBtn.addEventListener("click", handleLogin);
+
+  const signupSubmitBtn = document.getElementById("signup-submit-btn");
+  if (signupSubmitBtn) signupSubmitBtn.addEventListener("click", handleSignup);
+
   setTimeout(() => {
     onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -110,8 +114,7 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove("show"), 2600);
 }
 
-// 3. AUTHENTICATION & PROFILE LOADER
-window.handleSignup = async function () {
+async function handleSignup() {
   const nameEl = document.getElementById("signup-name");
   const usernameEl = document.getElementById("signup-username");
   const emailEl = document.getElementById("signup-email");
@@ -150,9 +153,9 @@ window.handleSignup = async function () {
   } catch (err) {
     showToast(err.message);
   }
-};
+}
 
-window.handleLogin = async function () {
+async function handleLogin() {
   const emailEl = document.getElementById("login-email");
   const passEl = document.getElementById("login-password");
   if (!emailEl || !passEl) return;
@@ -167,7 +170,7 @@ window.handleLogin = async function () {
   } catch (err) {
     showToast("Galat Email ya Password!");
   }
-};
+}
 
 window.handleLogout = async function () {
   await signOut(auth);
@@ -197,7 +200,6 @@ async function loadCurrentUserProfile() {
   if (myAvatar && currentUserData.avatar) myAvatar.src = currentUserData.avatar;
 }
 
-// 4. IMAGE COMPRESSOR & PREVIEW
 function compressImageFile(file, maxWidth = 720, quality = 0.65) {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -259,7 +261,6 @@ window.applyFilter = function (filterCss) {
   if (previewImg) previewImg.style.filter = filterCss;
 };
 
-// 5. POSTS, REELS & FEED
 window.publishPost = async function () {
   if (!currentUser) return;
   if (!currentUserData) {
@@ -418,9 +419,8 @@ function createPostCard(post) {
 
 function formatHashtags(text) {
   return text.replace(/#[a-z0-9_]+/gi, (match) => `<span class="hashtag">${match}</span>`);
-}
-// PART 2: Likes, Comments, Stories, Profile, Chat & Navigation
-window.toggleLike = async function (postId, ownerUid) {
+        }
+        window.toggleLike = async function (postId, ownerUid) {
   const postRef = doc(db, "posts", postId);
   const post = allPostsCache.find(p => p.id === postId);
   if (!post) return;
@@ -781,7 +781,7 @@ async function loadMessagesUsers() {
 
 function startDirectChat(partner) {
   activeChatPartner = partner;
-  const nameEl = document.getElementById("chat-partner-name");
+  const nameEl = document.getElementById("chat-manager-name") || document.getElementById("chat-partner-name");
   const avatarEl = document.getElementById("chat-partner-avatar");
   if (nameEl) nameEl.innerText = partner.username;
   if (avatarEl) avatarEl.src = partner.avatar;
@@ -857,4 +857,3 @@ window.switchTab = function (viewId, navBtn = null) {
   if (viewId === "messages-view") loadMessagesUsers();
   if (viewId === "notifications-view") loadNotifications();
 };
-  
