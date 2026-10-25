@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Koraa</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="mobile-container" id="app-root-container">
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <div class="splash-logo">Koraa</div>
+    <div class="splash-subtitle">Connect. Express. Belong.</div>
+  </div>
+
+  <!-- 1. Auth Section -->
+  <div class="auth-wrapper" id="auth-section">
+    <h1 class="brand-title">Koraa</h1>
+    
+    <div class="tab-selector">
+      <button class="tab-btn active" id="tab-login-btn">Log In</button>
+      <button class="tab-btn" id="tab-reg-btn">Register</button>
+    </div>
+
+    <!-- Login -->
+    <form id="form-login">
+      <div class="input-group">
+        <input type="email" id="login-identifier" class="input-field" placeholder="Enter your email" required>
+      </div>
+      <div class="input-group">
+        <input type="password" id="login-password" class="input-field" placeholder="Password" required>
+        <i class="ri-eye-off-line eye-icon" data-target="login-password"></i>
+      </div>
+      <button type="submit" class="action-btn" id="btn-login-submit">Log In</button>
+    </form>
+
+    <!-- Register Form -->
+    <form id="form-register" class="hidden">
+      <div class="input-group">
+        <input type="text" id="reg-name" class="input-field" placeholder="Full Name" required>
+      </div>
+      <div class="input-group">
+        <input type="text" id="reg-username" class="input-field" placeholder="Username (@username)" required>
+      </div>
+      <div class="input-group">
+        <input type="email" id="reg-email" class="input-field" placeholder="Email address" required>
+      </div>
+      <div class="input-group">
+        <input type="tel" id="reg-phone" class="input-field" placeholder="Phone Number (+91XXXXXXXXXX)" required>
+      </div>
+      <div class="input-group">
+        <input type="password" id="reg-password" class="input-field" placeholder="Create Password" required>
+        <i class="ri-eye-off-line eye-icon" data-target="reg-password"></i>
+      </div>
+      <button type="submit" class="action-btn" id="btn-register-submit">Create Account</button>
+    </form>
+
+    <div class="feedback-msg" id="auth-feedback"></div>
+  </div>
+    <!-- 2. Main App Screen -->
+  <div id="main-app" class="hidden">
+    <!-- Top Header -->
+    <header class="app-header" id="top-app-header">
+      <div class="logo">Koraa</div>
+      <div class="header-actions">
+        <i class="ri-chat-3-line" id="btn-open-dm" title="Messages"></i>
+        <i class="ri-logout-box-r-line" id="btn-logout" title="Log Out"></i>
+      </div>
+    </header>
+
+    <div class="pages-wrapper">
+      <!-- Page 1: Home Feed -->
+      <section id="page-home" class="app-page active">
+        <div class="stories-slider" id="stories-container">
+          <div class="story-item" id="btn-add-story">
+            <div class="story-ring add-ring"><i class="ri-add-line"></i></div>
+            <span class="story-name">Your Story</span>
+          </div>
+        </div>
+        <div id="posts-feed" class="posts-stream">
+          <div class="empty-state">Loading posts...</div>
+        </div>
+      </section>
+
+      <!-- Page 2: Explore -->
+      <section id="page-explore" class="app-page">
+        <div style="padding: 12px 14px;">
+          <input type="text" class="input-field" placeholder="Search creators, hashtags...">
+        </div>
+        <div class="profile-posts-grid" id="explore-grid"></div>
+      </section>
+
+      <!-- Page 3: Reels -->
+      <section id="page-reels" class="app-page">
+        <div class="empty-state">Reels coming soon!</div>
+      </section>
+
+      <!-- Page 4: Profile -->
+      <section id="page-profile" class="app-page">
+        <div class="profile-header">
+          <img src="https://picsum.photos/150/150" class="profile-avatar" id="my-profile-pic">
+          <div class="profile-stats">
+            <div class="stat"><b id="stat-posts">0</b><span>Posts</span></div>
+            <div class="stat"><b id="stat-followers">0</b><span>Followers</span></div>
+            <div class="stat"><b id="stat-following">0</b><span>Following</span></div>
+          </div>
+        </div>
+        <div class="profile-bio-box">
+          <h4 id="my-profile-name">User</h4>
+          <span class="profile-handle" id="my-profile-username">@username</span>
+          <p id="my-profile-bio" style="margin-top: 4px; font-size: 0.9rem;">Hey there! I am using Koraa.</p>
+        </div>
+        <div class="profile-actions-row">
+          <button class="btn-outline" id="btn-open-edit-profile">Edit Profile</button>
+          <button class="btn-outline" id="btn-share-profile">Share Profile</button>
+        </div>
+        <div class="profile-posts-grid" id="my-posts-grid"></div>
+      </section>
+    </div>
+
+    <!-- Fullscreen Dedicated Chat Window -->
+    <div class="chat-window hidden" id="fullscreen-chat-modal">
+      <div class="chat-header">
+        <div class="chat-user-preview">
+          <i class="ri-arrow-left-line" id="btn-close-chat" style="font-size: 1.5rem; cursor: pointer;"></i>
+          <b>Koraa Messages</b>
+        </div>
+        <div class="chat-header-actions">
+          <i class="ri-phone-fill" id="btn-start-audio-call" title="Audio Call"></i>
+          <i class="ri-vidicon-fill" id="btn-start-video-call" title="Video Call"></i>
+        </div>
+      </div>
+      <div class="chat-messages-area" id="chat-messages-area"></div>
+      <div class="chat-input-bar">
+        <input type="text" id="chat-text-input" placeholder="Message...">
+        <button class="chat-action-btn" id="btn-voice-record" title="Record Voice Note"><i class="ri-mic-fill"></i></button>
+        <button class="chat-action-btn send" id="btn-send-msg"><i class="ri-send-plane-fill"></i></button>
+      </div>
+    </div>
+
+    <!-- Clean Calling Overlay Screen -->
+    <div class="call-overlay hidden" id="call-overlay-screen">
+      <div style="text-align: center; margin-top: 30px;">
+        <img src="https://picsum.photos/150/150" class="call-profile-pulse">
+        <h2 id="call-heading-text" style="font-size: 1.4rem;">Audio Call</h2>
+        <p id="call-timer-text" style="color: #aaa; margin-top: 6px; font-size: 0.9rem;">Connecting...</p>
+      </div>
+
+      <div class="call-video-box hidden" id="call-video-box">
+        <video id="live-call-stream" autoplay playsinline muted></video>
+      </div>
+
+      <div class="call-controls">
+        <button class="call-btn toggle" id="btn-mute-call"><i class="ri-mic-line"></i></button>
+        <button class="call-btn hangup" id="btn-end-call"><i class="ri-phone-fill" style="transform: rotate(135deg);"></i></button>
+      </div>
+    </div>
+
+    <!-- Upload Post Modal -->
+    <div class="modal-overlay hidden" id="upload-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Create New Post</h3>
+          <i class="ri-close-line modal-close" id="btn-close-upload"></i>
+        </div>
+        <div class="upload-dropzone" id="dropzone" onclick="document.getElementById('media-input').click()">
+          <input type="file" id="media-input" accept="image/*" class="hidden">
+          <div id="dropzone-placeholder" style="text-align:center;">
+            <i class="ri-image-add-line" style="font-size: 2.2rem; color: #888;"></i>
+            <p style="font-size:0.85rem; color:#aaa; margin-top:6px;">Tap to select Photo</p>
+          </div>
+          <div id="media-preview-box" class="hidden" style="width:100%; height:100%;"></div>
+        </div>
+        <textarea id="post-caption" class="input-field post-textarea" placeholder="Write caption #koraa..."></textarea>
+        <button class="action-btn" id="btn-submit-post">Publish Post</button>
+      </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal-overlay hidden" id="edit-profile-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Edit Profile</h3>
+          <i class="ri-close-line modal-close" id="btn-close-edit-profile"></i>
+        </div>
+        <div class="input-group">
+          <input type="text" id="edit-name" class="input-field" placeholder="Full Name">
+        </div>
+        <div class="input-group">
+          <input type="text" id="edit-bio" class="input-field" placeholder="Bio">
+        </div>
+        <div class="input-group">
+          <label style="font-size: 0.8rem; color: #aaa; margin-bottom: 4px; display:block;">Change Profile Photo:</label>
+          <input type="file" id="edit-avatar-input" accept="image/*" class="input-field">
+        </div>
+        <button class="action-btn" id="btn-save-profile">Save Changes</button>
+      </div>
+    </div>
+
+    <!-- Comments Sheet Modal -->
+    <div class="modal-overlay hidden" id="comments-modal">
+      <div class="modal-card comments-sheet">
+        <div class="modal-header">
+          <h3>Comments</h3>
+          <i class="ri-close-line modal-close" id="btn-close-comments"></i>
+        </div>
+        <div class="comments-list-box" id="comments-list-box"></div>
+        <div class="comment-input-area">
+          <input type="text" id="input-new-comment" class="input-field" placeholder="Add a comment...">
+          <button class="btn-send-comment" id="btn-submit-comment"><i class="ri-send-plane-fill"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Story Viewer with 15s Progress Bar -->
+    <div class="modal-overlay hidden" id="story-viewer-modal">
+      <div class="story-progress-container" id="story-progress-container"></div>
+      <div class="story-user-info">
+        <img id="story-viewer-avatar" class="story-user-avatar">
+        <span id="story-viewer-username" class="story-user-name">Username</span>
+      </div>
+      <i class="ri-close-line modal-close" id="btn-close-story-viewer" style="position:absolute; top:20px; right:16px; z-index:220; color:#fff;"></i>
+      <div class="story-touch-area touch-left" id="story-touch-left"></div>
+      <div class="story-touch-area touch-right" id="story-touch-right"></div>
+      <img id="story-viewer-img" style="width:100%; height:100%; object-fit:contain;">
+    </div>
+
+    <!-- Hidden story input -->
+    <input type="file" id="story-file-input" accept="image/*" class="hidden">
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav" id="main-bottom-nav">
+      <i class="ri-home-5-fill nav-item active" data-page="page-home"></i>
+      <i class="ri-search-line nav-item" data-page="page-explore"></i>
+      <i class="ri-add-box-line nav-item" id="btn-open-upload"></i>
+      <i class="ri-movie-line nav-item" data-page="page-reels"></i>
+      <i class="ri-user-3-line nav-item" data-page="page-profile"></i>
+    </nav>
+  </div>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
