@@ -16,7 +16,7 @@
     <div class="splash-subtitle">Connect. Express. Belong.</div>
   </div>
 
-  <!-- 1. Auth Section -->
+  <!-- Auth Section -->
   <div class="auth-wrapper" id="auth-section">
     <h1 class="brand-title">Koraa</h1>
     
@@ -32,7 +32,6 @@
       </div>
       <div class="input-group">
         <input type="password" id="login-password" class="input-field" placeholder="Password" required>
-        <i class="ri-eye-off-line eye-icon" data-target="login-password"></i>
       </div>
       <button type="submit" class="action-btn" id="btn-login-submit">Log In</button>
     </form>
@@ -49,35 +48,32 @@
         <input type="email" id="reg-email" class="input-field" placeholder="Email address" required>
       </div>
       <div class="input-group">
-        <input type="tel" id="reg-phone" class="input-field" placeholder="Phone Number (+91XXXXXXXXXX)" required>
-      </div>
-      <div class="input-group">
-        <input type="password" id="reg-password" class="input-field" placeholder="Create Password" required>
-        <i class="ri-eye-off-line eye-icon" data-target="reg-password"></i>
+        <input type="password" id="reg-password" class="input-field" placeholder="Create Password (min 6 chars)" required>
       </div>
       <button type="submit" class="action-btn" id="btn-register-submit">Create Account</button>
     </form>
 
     <div class="feedback-msg" id="auth-feedback"></div>
   </div>
-    <!-- 2. Main App Screen -->
+    <!-- Main App Screen -->
   <div id="main-app" class="hidden">
     <!-- Top Header -->
     <header class="app-header" id="top-app-header">
       <div class="logo">Koraa</div>
       <div class="header-actions">
-        <i class="ri-chat-3-line" id="btn-open-dm" title="Messages"></i>
-        <i class="ri-logout-box-r-line" id="btn-logout" title="Log Out"></i>
+        <i class="ri-heart-3-line" id="btn-open-notifs" title="Notifications"></i>
+        <!-- Direct Messages / Recent Chats List -->
+        <i class="ri-chat-3-line" id="btn-open-inbox" title="Messages"></i>
       </div>
     </header>
 
     <div class="pages-wrapper">
-      <!-- Page 1: Home Feed -->
+      <!-- 1. Home Feed -->
       <section id="page-home" class="app-page active">
         <div class="stories-slider" id="stories-container">
-          <div class="story-item" id="btn-add-story">
-            <div class="story-ring add-ring"><i class="ri-add-line"></i></div>
-            <span class="story-name">Your Story</span>
+          <div class="story-item" id="btn-open-camera-story">
+            <div class="story-ring add-ring"><i class="ri-camera-lens-line"></i></div>
+            <span class="story-name">Add Story</span>
           </div>
         </div>
         <div id="posts-feed" class="posts-stream">
@@ -85,106 +81,181 @@
         </div>
       </section>
 
-      <!-- Page 2: Explore -->
+      <!-- 2. Explore / Live User Search -->
       <section id="page-explore" class="app-page">
-        <div style="padding: 12px 14px;">
-          <input type="text" class="input-field" placeholder="Search creators, hashtags...">
+        <div style="padding: 12px 16px;">
+          <input type="text" id="live-user-search-input" class="input-field" placeholder="Search creators...">
         </div>
-        <div class="profile-posts-grid" id="explore-grid"></div>
+        <div class="search-results-list" id="search-results-list"></div>
       </section>
 
-      <!-- Page 3: Reels -->
+      <!-- 3. Reels Section -->
       <section id="page-reels" class="app-page">
-        <div class="empty-state">Reels coming soon!</div>
+        <div id="reels-feed" style="height: calc(100vh - 120px); overflow-y: scroll; scroll-snap-type: y mandatory;">
+          <div class="empty-state">No reels uploaded yet.</div>
+        </div>
       </section>
 
-      <!-- Page 4: Profile -->
+      <!-- 4. MY PROFILE SECTION -->
       <section id="page-profile" class="app-page">
-        <div class="profile-header">
-          <img src="https://picsum.photos/150/150" class="profile-avatar" id="my-profile-pic">
-          <div class="profile-stats">
-            <div class="stat"><b id="stat-posts">0</b><span>Posts</span></div>
-            <div class="stat"><b id="stat-followers">0</b><span>Followers</span></div>
-            <div class="stat"><b id="stat-following">0</b><span>Following</span></div>
+        <div class="profile-top-bar">
+          <b id="my-profile-handle-top" style="font-size:1.15rem;">@user</b>
+          <!-- Settings Icon on Profile Side -->
+          <i class="ri-settings-3-line" id="btn-open-settings" style="font-size: 1.5rem; cursor: pointer;"></i>
+        </div>
+
+        <div class="profile-header-clean">
+          <img src="https://picsum.photos/150/150" class="profile-avatar-clean" id="my-profile-pic">
+          <div class="profile-stats-row">
+            <div class="stat-item"><span class="stat-num" id="stat-posts">0</span><span class="stat-label">Posts</span></div>
+            <div class="stat-item"><span class="stat-num" id="stat-followers">0</span><span class="stat-label">Followers</span></div>
+            <div class="stat-item"><span class="stat-num" id="stat-following">0</span><span class="stat-label">Following</span></div>
           </div>
         </div>
-        <div class="profile-bio-box">
-          <h4 id="my-profile-name">User</h4>
-          <span class="profile-handle" id="my-profile-username">@username</span>
-          <p id="my-profile-bio" style="margin-top: 4px; font-size: 0.9rem;">Hey there! I am using Koraa.</p>
+
+        <div class="profile-details-block">
+          <h3 class="profile-display-name" id="my-profile-name">User</h3>
+          <p class="profile-handle-tag" id="my-profile-username">@user</p>
+          <p class="profile-bio-text" id="my-profile-bio">Raoshab</p>
         </div>
-        <div class="profile-actions-row">
-          <button class="btn-outline" id="btn-open-edit-profile">Edit Profile</button>
-          <button class="btn-outline" id="btn-share-profile">Share Profile</button>
+
+        <div class="profile-cta-row">
+          <button class="btn-profile-primary" id="btn-open-edit-profile">Edit Profile</button>
+          <button class="btn-profile-secondary" id="btn-share-my-profile">
+            <i class="ri-share-forward-line"></i> Share Profile
+          </button>
         </div>
-        <div class="profile-posts-grid" id="my-posts-grid"></div>
+
+        <div class="user-posts-gallery" id="my-posts-grid"></div>
       </section>
     </div>
 
-    <!-- Fullscreen Dedicated Chat Window -->
+    <!-- PROFILE SETTINGS SHEET (Dark Mode & Logout) -->
+    <div class="modal-overlay hidden" id="settings-sheet-modal">
+      <div class="settings-menu-sheet">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3>Settings</h3>
+          <i class="ri-close-line" id="btn-close-settings" style="font-size: 1.5rem; cursor: pointer;"></i>
+        </div>
+        
+        <div class="settings-item-row" id="btn-toggle-theme-row">
+          <span><i class="ri-moon-line"></i> Dark / Light Mode</span>
+          <i class="ri-toggle-line" id="theme-icon-state" style="font-size: 1.5rem;"></i>
+        </div>
+
+        <div class="settings-item-row logout" id="btn-logout-row">
+          <span><i class="ri-logout-box-r-line"></i> Log Out</span>
+          <i class="ri-arrow-right-s-line"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- INBOX / DIRECT MESSAGE RECENT CHATS LIST -->
+    <div class="inbox-modal hidden" id="direct-inbox-modal">
+      <div class="chat-header">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <i class="ri-arrow-left-line" id="btn-close-inbox" style="font-size: 1.5rem; cursor: pointer;"></i>
+          <b>Messages</b>
+        </div>
+      </div>
+      <div class="inbox-list" id="inbox-conversations-list">
+        <div class="empty-state">No conversations yet. Message someone from their profile or search!</div>
+      </div>
+    </div>
+
+    <!-- PERSONAL 1-on-1 CHAT SCREEN -->
     <div class="chat-window hidden" id="fullscreen-chat-modal">
       <div class="chat-header">
-        <div class="chat-user-preview">
+        <div style="display:flex; align-items:center; gap:12px;">
           <i class="ri-arrow-left-line" id="btn-close-chat" style="font-size: 1.5rem; cursor: pointer;"></i>
-          <b>Koraa Messages</b>
-        </div>
-        <div class="chat-header-actions">
-          <i class="ri-phone-fill" id="btn-start-audio-call" title="Audio Call"></i>
-          <i class="ri-vidicon-fill" id="btn-start-video-call" title="Video Call"></i>
+          <div>
+            <b id="chat-header-title">@user</b>
+            <small id="chat-header-subtitle" style="display:block; font-size:0.72rem; color:var(--text-muted);">Personal Message</small>
+          </div>
         </div>
       </div>
       <div class="chat-messages-area" id="chat-messages-area"></div>
       <div class="chat-input-bar">
         <input type="text" id="chat-text-input" placeholder="Message...">
-        <button class="chat-action-btn" id="btn-voice-record" title="Record Voice Note"><i class="ri-mic-fill"></i></button>
         <button class="chat-action-btn send" id="btn-send-msg"><i class="ri-send-plane-fill"></i></button>
       </div>
     </div>
 
-    <!-- Clean Calling Overlay Screen -->
-    <div class="call-overlay hidden" id="call-overlay-screen">
-      <div style="text-align: center; margin-top: 30px;">
-        <img src="https://picsum.photos/150/150" class="call-profile-pulse">
-        <h2 id="call-heading-text" style="font-size: 1.4rem;">Audio Call</h2>
-        <p id="call-timer-text" style="color: #aaa; margin-top: 6px; font-size: 0.9rem;">Connecting...</p>
+    <!-- OTHER USER PROFILE VIEW -->
+    <div class="other-profile-modal hidden" id="other-user-profile-modal">
+      <div class="chat-header">
+        <i class="ri-arrow-left-line" id="btn-close-other-profile" style="font-size: 1.5rem; cursor: pointer;"></i>
+        <b id="other-header-username">@user</b>
+        <div></div>
       </div>
 
-      <div class="call-video-box hidden" id="call-video-box">
-        <video id="live-call-stream" autoplay playsinline muted></video>
+      <div class="profile-header-clean">
+        <img src="https://picsum.photos/150/150" class="profile-avatar-clean" id="other-profile-pic">
+        <div class="profile-stats-row">
+          <div class="stat-item"><span class="stat-num" id="other-stat-posts">0</span><span class="stat-label">Posts</span></div>
+          <div class="stat-item"><span class="stat-num" id="other-stat-followers">0</span><span class="stat-label">Followers</span></div>
+          <div class="stat-item"><span class="stat-num" id="other-stat-following">0</span><span class="stat-label">Following</span></div>
+        </div>
       </div>
 
-      <div class="call-controls">
-        <button class="call-btn toggle" id="btn-mute-call"><i class="ri-mic-line"></i></button>
-        <button class="call-btn hangup" id="btn-end-call"><i class="ri-phone-fill" style="transform: rotate(135deg);"></i></button>
+      <div class="profile-details-block">
+        <h3 class="profile-display-name" id="other-profile-name">User</h3>
+        <p class="profile-handle-tag" id="other-profile-handle">@user</p>
+        <p class="profile-bio-text" id="other-profile-bio">Bio</p>
+      </div>
+
+      <div class="profile-cta-row">
+        <button class="btn-profile-primary" id="btn-other-follow">Follow</button>
+        <button class="btn-profile-secondary" id="btn-other-personal-message">
+          <i class="ri-chat-3-line"></i> Message
+        </button>
+      </div>
+
+      <div class="user-posts-gallery" id="other-posts-grid"></div>
+    </div>
+
+    <!-- IN-APP CAMERA FOR DIRECT PHOTO / VIDEO SHOOT -->
+    <div class="camera-view-container hidden" id="in-app-camera-modal">
+      <video id="live-camera-video" class="camera-preview-tag" autoplay playsinline muted></video>
+      <canvas id="camera-frame-canvas" class="hidden"></canvas>
+
+      <div class="camera-header-hud">
+        <i class="ri-close-line" id="btn-close-camera" style="cursor:pointer;"></i>
+        <span id="camera-status-badge" style="font-size:0.9rem; background:rgba(0,0,0,0.5); padding:4px 12px; border-radius:14px;">Tap: Photo</span>
+      </div>
+
+      <div class="camera-footer-hud">
+        <button id="btn-cam-mode-toggle" class="btn-profile-secondary" style="flex:0; padding:6px 14px; font-size:0.8rem; border-radius:14px;">Story Mode</button>
+        <div class="camera-trigger-button" id="btn-capture-media"><span></span></div>
+        <div style="width:60px;"></div>
       </div>
     </div>
 
-    <!-- Upload Post Modal -->
-    <div class="modal-overlay hidden" id="upload-modal">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h3>Create New Post</h3>
-          <i class="ri-close-line modal-close" id="btn-close-upload"></i>
+    <!-- STORY VIEWER (Tap Header opens user profile) -->
+    <div class="modal-overlay hidden" id="story-viewer-modal" style="background:#000;">
+      <div id="story-progress-container" style="position: absolute; top: 12px; left: 0; width: 100%; padding: 0 10px; display: flex; gap: 6px; z-index: 210;"></div>
+      
+      <div id="story-user-touch-profile" style="position: absolute; top: 24px; left: 14px; display: flex; align-items: center; gap: 10px; z-index: 220; cursor: pointer;">
+        <img id="story-viewer-avatar" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fff;">
+        <div>
+          <span id="story-viewer-username" style="font-weight: 700; font-size: 0.92rem; color: #fff; display:block;">Username</span>
+          <small style="color:#ddd; font-size:0.75rem;">View Profile &rsaquo;</small>
         </div>
-        <div class="upload-dropzone" id="dropzone" onclick="document.getElementById('media-input').click()">
-          <input type="file" id="media-input" accept="image/*" class="hidden">
-          <div id="dropzone-placeholder" style="text-align:center;">
-            <i class="ri-image-add-line" style="font-size: 2.2rem; color: #888;"></i>
-            <p style="font-size:0.85rem; color:#aaa; margin-top:6px;">Tap to select Photo</p>
-          </div>
-          <div id="media-preview-box" class="hidden" style="width:100%; height:100%;"></div>
-        </div>
-        <textarea id="post-caption" class="input-field post-textarea" placeholder="Write caption #koraa..."></textarea>
-        <button class="action-btn" id="btn-submit-post">Publish Post</button>
       </div>
+
+      <i class="ri-close-line" id="btn-close-story-viewer" style="position:absolute; top:20px; right:16px; z-index:220; color:#fff; font-size:1.6rem; cursor:pointer;"></i>
+      <img id="story-viewer-img" style="width:100%; height:100%; object-fit:contain;">
     </div>
 
-    <!-- Edit Profile Modal -->
+    <!-- EDIT PROFILE MODAL (With Live Photo Preview Tag) -->
     <div class="modal-overlay hidden" id="edit-profile-modal">
       <div class="modal-card">
         <div class="modal-header">
           <h3>Edit Profile</h3>
-          <i class="ri-close-line modal-close" id="btn-close-edit-profile"></i>
+          <i class="ri-close-line" id="btn-close-edit-profile" style="font-size:1.5rem; cursor:pointer;"></i>
+        </div>
+        <div style="display:flex; justify-content:center; margin-bottom:14px;">
+          <img id="edit-avatar-preview" src="https://picsum.photos/150/150" style="width:84px; height:84px; border-radius:50%; object-fit:cover; border:2px solid var(--border-color);">
         </div>
         <div class="input-group">
           <input type="text" id="edit-name" class="input-field" placeholder="Full Name">
@@ -193,49 +264,18 @@
           <input type="text" id="edit-bio" class="input-field" placeholder="Bio">
         </div>
         <div class="input-group">
-          <label style="font-size: 0.8rem; color: #aaa; margin-bottom: 4px; display:block;">Change Profile Photo:</label>
+          <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; display:block;">Select New Profile Photo:</label>
           <input type="file" id="edit-avatar-input" accept="image/*" class="input-field">
         </div>
         <button class="action-btn" id="btn-save-profile">Save Changes</button>
       </div>
     </div>
 
-    <!-- Comments Sheet Modal -->
-    <div class="modal-overlay hidden" id="comments-modal">
-      <div class="modal-card comments-sheet">
-        <div class="modal-header">
-          <h3>Comments</h3>
-          <i class="ri-close-line modal-close" id="btn-close-comments"></i>
-        </div>
-        <div class="comments-list-box" id="comments-list-box"></div>
-        <div class="comment-input-area">
-          <input type="text" id="input-new-comment" class="input-field" placeholder="Add a comment...">
-          <button class="btn-send-comment" id="btn-submit-comment"><i class="ri-send-plane-fill"></i></button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Story Viewer with 15s Progress Bar -->
-    <div class="modal-overlay hidden" id="story-viewer-modal">
-      <div class="story-progress-container" id="story-progress-container"></div>
-      <div class="story-user-info">
-        <img id="story-viewer-avatar" class="story-user-avatar">
-        <span id="story-viewer-username" class="story-user-name">Username</span>
-      </div>
-      <i class="ri-close-line modal-close" id="btn-close-story-viewer" style="position:absolute; top:20px; right:16px; z-index:220; color:#fff;"></i>
-      <div class="story-touch-area touch-left" id="story-touch-left"></div>
-      <div class="story-touch-area touch-right" id="story-touch-right"></div>
-      <img id="story-viewer-img" style="width:100%; height:100%; object-fit:contain;">
-    </div>
-
-    <!-- Hidden story input -->
-    <input type="file" id="story-file-input" accept="image/*" class="hidden">
-
     <!-- Bottom Navigation Bar -->
     <nav class="bottom-nav" id="main-bottom-nav">
       <i class="ri-home-5-fill nav-item active" data-page="page-home"></i>
       <i class="ri-search-line nav-item" data-page="page-explore"></i>
-      <i class="ri-add-box-line nav-item" id="btn-open-upload"></i>
+      <i class="ri-camera-line nav-item" id="btn-open-camera-shoot" title="Shoot Photo/Video"></i>
       <i class="ri-movie-line nav-item" data-page="page-reels"></i>
       <i class="ri-user-3-line nav-item" data-page="page-profile"></i>
     </nav>

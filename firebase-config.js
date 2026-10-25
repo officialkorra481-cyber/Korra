@@ -1,11 +1,7 @@
-// ==========================================
-// KORAA - Firebase Setup (Part 1)
-// ==========================================
+// firebase-config.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { 
   getAuth, 
-  RecaptchaVerifier, 
-  signInWithPhoneNumber, 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signOut, 
@@ -16,10 +12,10 @@ import {
   doc, 
   setDoc, 
   getDoc, 
-  addDoc,
+  addDoc, 
+  deleteDoc, 
   collection, 
   query, 
-  orderBy, 
   onSnapshot, 
   updateDoc, 
   arrayUnion, 
@@ -27,25 +23,27 @@ import {
   serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+// Aapke Firebase Project ki Real Config Details
 const firebaseConfig = {
   apiKey: "AIzaSyD1SY_t_qQp8BJaoWFoprW60wDJadeUK6E",
   authDomain: "korra-e92a3.firebaseapp.com",
+  databaseURL: "https://korra-e92a3-default-rtdb.firebaseio.com",
   projectId: "korra-e92a3",
   storageBucket: "korra-e92a3.firebasestorage.app",
   messagingSenderId: "602281077590",
   appId: "1:602281077590:web:062d414a26c6acb7ce44f7",
   measurementId: "G-13H7F3HG1S"
 };
-// ==========================================
-// KORAA - Firebase Setup (Part 2)
-// ==========================================
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
 
+// Firebase Initialize
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Export for app.js
 export { 
-  RecaptchaVerifier, 
-  signInWithPhoneNumber, 
+  auth, 
+  db, 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signOut, 
@@ -53,13 +51,13 @@ export {
   doc, 
   setDoc, 
   getDoc, 
-  addDoc,
+  addDoc, 
+  deleteDoc, 
   collection, 
   query, 
-  orderBy, 
   onSnapshot, 
   updateDoc, 
   arrayUnion, 
   arrayRemove, 
-  serverTimestamp
+  serverTimestamp 
 };
