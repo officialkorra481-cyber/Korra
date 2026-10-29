@@ -1,183 +1,72 @@
-// ==========================================
-// KORAA - Auth Logic with Screen Switch (Part 1)
-// ==========================================
 import { 
   auth, 
-  db, 
-  RecaptchaVerifier, 
-  signInWithPhoneNumber, 
   signInWithEmailAndPassword, 
-  signOut,
-  onAuthStateChanged,
-  doc, 
-  setDoc, 
-  serverTimestamp 
+  createUserWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged 
 } from "./firebase-config.js";
 
-const authSection = document.getElementById("auth-section");
-const mainApp = document.getElementById("main-app");
+// Auto Login State Monitor
+export function initAuth() {
+  const splashScreen = document.getElementById("screen-splash");
 
-// User Login State Monitor (Auto Screen Switch)
-onAuthStateChanged(auth, (user) => {
-  const splash = document.getElementById("splash-screen");
-  if (splash) {
-    splash.style.opacity = "0";
-    setTimeout(() => splash.classList.add("hidden"), 500);
+  onAuthStateChanged(auth, (user) => {
+    // 1.5 second tak Splash Screen full screen dikhegi
+    setTimeout(() => {
+      if (splashScreen) {
+        splashScreen.classList.remove("active");
+        splashScreen.style.display = "none";
+      }
+
+      if (user) {
+        // Logged-in user seedha feed par jayega
+        window.showScreen("screen-home");
+        updateUserUI(user);
+      } else {
+        // New/Logged-out user login form par jayega
+        window.showScreen("screen-login");
+      }
+    }, 1500);
+  });
+}
+
+// Login Function
+export async function handleLogin(email, password) {
+  if (!email || !password) return alert("Email aur password likhein!");
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    window.showScreen("screen-home");
+    updateUserUI(cred.user);
+  } catch (err) {
+    alert("Login Error: " + err.message);
   }
+}
 
-  if (user) {
-    // Agar user logged in hai to Home Feed show karein
-    authSection.classList.add("hidden");
-    mainApp.classList.remove("hidden");
-  } else {
-    // Agar logged out hai to Login/Register screen show karein
-    mainApp.classList.add("hidden");
-    authSection.classList.remove("hidden");
+// Signup Function
+export async function handleSignup(email, password) {
+  if (!email || !password) return alert("Email aur password likhein!");
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    window.showScreen("screen-otp");
+    updateUserUI(cred.user);
+  } catch (err) {
+    alert("Signup Error: " + err.message);
   }
-});
+}
 
-// Logout Handler
-const btnLogout = document.getElementById("btn-logout");
-if (btnLogout) {
-  btnLogout.addEventListener("click", async () => {
+// Logout Function
+export async function handleLogout() {
+  try {
     await signOut(auth);
-  });
-}
-
-// Password Visibility Toggle
-document.querySelectorAll(".eye-icon").forEach((icon) => {
-  icon.addEventListener("click", () => {
-    const targetId = icon.getAttribute("data-target");
-    const input = document.getElementById(targetId);
-    
-    if (input.type === "password") {
-      input.type = "text";
-      icon.classList.remove("ri-eye-off-line");
-      icon.classList.add("ri-eye-line");
-    } else {
-      input.type = "password";
-      icon.classList.remove("ri-eye-line");
-      icon.classList.add("ri-eye-off-line");
-    }
-  });
-});
-// ==========================================
-// KORAA - Auth Logic with Screen Switch (Part 2)
-// ==========================================
-// Tab Switcher
-const tabLogin = document.getElementById("tab-login-btn");
-const tabReg = document.getElementById("tab-reg-btn");
-const formLogin = document.getElementById("form-login");
-const formRegister = document.getElementById("form-register");
-const feedback = document.getElementById("auth-feedback");
-
-function showMessage(msg, isError = true) {
-  feedback.textContent = msg;
-  feedback.className = `feedback-msg ${isError ? 'error' : 'success'}`;
-}
-
-tabLogin.addEventListener("click", () => {
-  tabLogin.classList.add("active");
-  tabReg.classList.remove("active");
-  formLogin.classList.remove("hidden");
-  formRegister.classList.add("hidden");
-  feedback.className = "feedback-msg";
-});
-
-tabReg.addEventListener("click", () => {
-  tabReg.classList.add("active");
-  tabLogin.classList.remove("active");
-  formRegister.classList.remove("hidden");
-  formLogin.classList.add("hidden");
-  feedback.className = "feedback-msg";
-});
-
-// Setup Recaptcha once
-function initRecaptcha() {
-  if (!window.recaptchaVerifier) {
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-      size: "invisible",
-      callback: () => {}
-    });
-  }
-}
-
-let confirmationResultRef = null;
-const btnSendOtp = document.getElementById("btn-send-otp");
-const otpArea = document.getElementById("otp-area");
-
-btnSendOtp.addEventListener("click", async () => {
-  const phone = document.getElementById("reg-phone").value.trim();
-  if (!phone.startsWith("+") || phone.length < 10) {
-    showMessage("Please enter phone number with country code (e.g., +91...)");
-    return;
-  }
-
-  try {
-    initRecaptcha();
-    btnSendOtp.disabled = true;
-    btnSendOtp.innerText = "Sending OTP...";
-
-    confirmationResultRef = await signInWithPhoneNumber(auth, phone, window.recaptchaVerifier);
-    showMessage("OTP sent successfully!", false);
-    otpArea.style.display = "block";
-    btnSendOtp.style.display = "none";
-  } catch (error) {
-    showMessage(error.message);
-    btnSendOtp.disabled = false;
-    btnSendOtp.innerText = "Send OTP";
-  }
-});
-
-// Verify OTP & Switch to App
-const btnVerifyOtp = document.getElementById("btn-verify-otp");
-
-btnVerifyOtp.addEventListener("click", async () => {
-  const code = document.getElementById("otp-code").value.trim();
-  const name = document.getElementById("reg-name").value.trim();
-  const username = document.getElementById("reg-username").value.trim().toLowerCase();
-
-  if (code.length !== 6) {
-    showMessage("Enter 6-digit OTP");
-    return;
-  }
-
-  try {
-    btnVerifyOtp.disabled = true;
-    btnVerifyOtp.innerText = "Verifying...";
-
-    const res = await confirmationResultRef.confirm(code);
-    const user = res.user;
-
-    // Save profile to Firestore
-    await setDoc(doc(db, "users", user.uid), {
-      uid: user.uid,
-      fullName: name,
-      username: username,
-      phone: user.phoneNumber,
-      bio: "Hey there! I am using Koraa.",
-      createdAt: serverTimestamp()
-    });
-
-    showMessage("Verification successful! Opening App...", false);
-    // onAuthStateChanged automatically screen change karega
+    window.showScreen("screen-login");
   } catch (err) {
-    showMessage("Invalid OTP: " + err.message);
-    btnVerifyOtp.disabled = false;
-    btnVerifyOtp.innerText = "Verify & Create Account";
+    alert("Logout Error: " + err.message);
   }
-});
+}
 
-// Login Form Submit
-formLogin.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const email = document.getElementById("login-identifier").value.trim();
-  const pass = document.getElementById("login-password").value;
-
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-    // onAuthStateChanged automatically screen change karega
-  } catch (err) {
-    showMessage("Login failed: " + err.message);
-  }
-});
+// Helper: Username update across screens
+function updateUserUI(user) {
+  const username = user.email ? user.email.split("@")[0] : "koraa_user";
+  const userTagElements = document.querySelectorAll(".current-username-tag");
+  userTagElements.forEach(el => el.textContent = username);
+}

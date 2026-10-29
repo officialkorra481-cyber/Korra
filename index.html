@@ -3,285 +3,1301 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Koraa</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <title>Korra</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #000000 !important;
+      color: #f5f5f5 !important;
+      padding-bottom: 52px;
+      overflow-x: hidden;
+    }
+
+    /* Screen Visibility Rules */
+    .screen-view {
+      display: none !important;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    .screen-view.active {
+      display: block !important;
+    }
+
+    /* 1. Splash Screen */
+    #screen-splash {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #000000;
+      z-index: 99999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    #screen-splash.active {
+      display: flex !important;
+    }
+
+    .splash-logo {
+      font-size: 72px;
+      font-weight: 900;
+      background: linear-gradient(180deg, #ffffff 0%, #a8a8a8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .splash-title {
+      font-size: 30px;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    .splash-sub {
+      font-size: 13px;
+      color: #737373;
+      margin-top: 6px;
+    }
+
+    .splash-footer {
+      position: absolute;
+      bottom: 30px;
+      font-size: 11px;
+      color: #555555;
+      letter-spacing: 1px;
+    }
+
+    /* Auth Screens */
+    .auth-container {
+      padding: 40px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .auth-brand {
+      font-size: 34px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .auth-sub {
+      font-size: 13px;
+      color: #8e8e8e;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .auth-tabs {
+      display: flex;
+      width: 100%;
+      border-bottom: 1px solid #262626;
+      margin-bottom: 20px;
+    }
+
+    .auth-tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      color: #737373;
+      padding: 10px 0;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .auth-tab-btn.active {
+      color: #ffffff;
+      border-bottom: 2px solid #ffffff;
+    }
+
+    .auth-input {
+      width: 100%;
+      height: 44px;
+      background: #121212;
+      border: 1px solid #262626;
+      border-radius: 8px;
+      color: #ffffff;
+      padding: 0 14px;
+      font-size: 14px;
+      margin-bottom: 12px;
+      outline: none;
+    }
+
+    .auth-input:focus {
+      border-color: #555555;
+    }
+
+    .auth-btn-primary {
+      width: 100%;
+      height: 44px;
+      background: linear-gradient(90deg, #6c2bd9 0%, #9333ea 100%);
+      border: none;
+      border-radius: 8px;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+
+    .auth-btn-fb {
+      width: 100%;
+      height: 44px;
+      background: #1877f2;
+      border: none;
+      border-radius: 8px;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      color: #555555;
+      font-size: 12px;
+      margin: 14px 0;
+    }
+
+    .auth-divider::before, .auth-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #262626;
+    }
+
+    /* OTP Screen */
+    .otp-inputs {
+      display: flex;
+      gap: 8px;
+      margin: 20px 0;
+    }
+
+    .otp-box {
+      width: 44px;
+      height: 48px;
+      background: #121212;
+      border: 1px solid #262626;
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 20px;
+      text-align: center;
+      outline: none;
+    }
+
+    /* Top App Bar */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 48px;
+      background-color: #000000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      border-bottom: 1px solid #141414;
+    }
+
+    .brand-name {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .top-icons {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .icon-action {
+      background: none;
+      border: none;
+      color: #ffffff;
+      display: flex;
+      cursor: pointer;
+    }
+
+    /* Stories Tray */
+    .stories-tray {
+      display: flex;
+      gap: 14px;
+      padding: 10px 14px;
+      overflow-x: auto;
+      border-bottom: 1px solid #141414;
+      scrollbar-width: none;
+    }
+
+    .stories-tray::-webkit-scrollbar {
+      display: none;
+    }
+
+    .story-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .story-border {
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .story-thumb {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2px solid #000000;
+      object-fit: cover;
+    }
+
+    .story-label {
+      font-size: 11px;
+      color: #a8a8a8;
+      max-width: 64px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Feed Posts */
+    .feed-post {
+      margin-bottom: 16px;
+      border-bottom: 1px solid #141414;
+    }
+
+    .post-user-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+    }
+
+    .post-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .post-author-img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .post-media-box {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background-color: #121212;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .post-media-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .pop-heart {
+      position: absolute;
+      width: 95px;
+      height: 95px;
+      fill: #ff2d55;
+      opacity: 0;
+      transform: scale(0);
+      pointer-events: none;
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
+      z-index: 10;
+    }
+
+    .pop-heart.animate {
+      opacity: 0.95;
+      transform: scale(1.25);
+    }
+
+    .post-action-bar {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 14px 6px;
+    }
+
+    .post-action-bar .left {
+      display: flex;
+      gap: 16px;
+    }
+
+    .btn-icon {
+      background: none;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      display: flex;
+    }
+
+    .btn-icon.liked svg {
+      color: #ff2d55;
+      fill: #ff2d55;
+    }
+
+    .btn-icon.bookmarked svg {
+      fill: #ffffff;
+    }
+
+    .post-details {
+      padding: 0 14px 10px;
+      font-size: 13px;
+    }
+
+    .post-details .likes {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .post-details .caption span {
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    /* Explore Search Grid */
+    .search-header {
+      padding: 8px 12px;
+      border-bottom: 1px solid #141414;
+    }
+
+    .search-bar-input {
+      width: 100%;
+      height: 36px;
+      background: #1c1c1c;
+      border-radius: 8px;
+      border: none;
+      padding: 0 12px;
+      color: #ffffff;
+      outline: none;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .grid-container img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+    }
+
+    /* Reels View */
+    .reels-viewport {
+      height: calc(100vh - 52px);
+      position: relative;
+      background: #000000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .reels-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .reels-overlay-right {
+      position: absolute;
+      right: 12px;
+      bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .reels-overlay-bottom {
+      position: absolute;
+      left: 14px;
+      bottom: 24px;
+      max-width: 75%;
+    }
+
+    /* Profile UI */
+    .profile-meta-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 18px 14px;
+    }
+
+    .profile-avatar-lg {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .stat-item b {
+      font-size: 16px;
+    }
+
+    .profile-bio-box {
+      padding: 0 16px 14px;
+      font-size: 13px;
+    }
+
+    .profile-action-btns {
+      display: flex;
+      gap: 8px;
+      padding: 0 16px 14px;
+    }
+
+    .btn-profile-sub {
+      flex: 1;
+      height: 32px;
+      background: #1e1e1e;
+      border: none;
+      border-radius: 6px;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Messages & Chat */
+    .chat-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid #111111;
+      cursor: pointer;
+    }
+
+    .chat-row img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .chat-bubble-user {
+      background: #3797f0;
+      color: #ffffff;
+      padding: 10px 14px;
+      border-radius: 18px 18px 2px 18px;
+      max-width: 75%;
+      align-self: flex-end;
+      margin: 6px 14px;
+      font-size: 14px;
+    }
+
+    .chat-bubble-peer {
+      background: #262626;
+      color: #ffffff;
+      padding: 10px 14px;
+      border-radius: 18px 18px 18px 2px;
+      max-width: 75%;
+      align-self: flex-start;
+      margin: 6px 14px;
+      font-size: 14px;
+    }
+
+    /* Calling Screens */
+    .call-screen-view {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+      height: 100vh;
+      background: #101010;
+    }
+
+    .call-avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 3px solid #333333;
+    }
+
+    .call-actions-bar {
+      display: flex;
+      gap: 24px;
+    }
+
+    .btn-call-round {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      cursor: pointer;
+    }
+
+    .btn-hangup { background: #e0245e; }
+    .btn-call-util { background: #222222; }
+
+    /* Settings Items */
+    .settings-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid #141414;
+      cursor: pointer;
+    }
+
+    .settings-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+    }
+
+    /* Master Bottom Navigation */
+    .master-bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 50px;
+      background-color: #000000;
+      border-top: 1px solid #1a1a1a;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 150;
+    }
+
+    .nav-tab-node {
+      background: none;
+      border: none;
+      color: #737373;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-tab-node.active { color: #ffffff; }
+
+    .nav-tab-avatar {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      border: 1px solid transparent;
+      object-fit: cover;
+    }
+
+    .nav-tab-node.active .nav-tab-avatar {
+      border-color: #ffffff;
+    }
+  </style>
 </head>
 <body>
 
-<div class="mobile-container" id="app-root-container">
-  <!-- Splash Screen -->
-  <div id="splash-screen">
-    <div class="splash-logo">Koraa</div>
-    <div class="splash-subtitle">Connect. Express. Belong.</div>
-  </div>
+  <!-- Hidden Photo Picker for Upload -->
+  <input type="file" id="global-file-input" accept="image/*" style="display: none;">
 
-  <!-- Auth Section -->
-  <div class="auth-wrapper" id="auth-section">
-    <h1 class="brand-title">Koraa</h1>
-    
-    <div class="tab-selector">
-      <button class="tab-btn active" id="tab-login-btn">Log In</button>
-      <button class="tab-btn" id="tab-reg-btn">Register</button>
+  <!-- 1. SPLASH SCREEN -->
+  <section id="screen-splash" class="screen-view active">
+    <div class="splash-logo">K</div>
+    <div class="splash-title">Korra</div>
+    <div class="splash-sub">Connect • Share • Be You</div>
+    <div class="splash-footer">From Korra Team</div>
+  </section>
+
+  <!-- 2. LOGIN SCREEN -->
+  <section id="screen-login" class="screen-view">
+    <div class="auth-container">
+      <div class="auth-brand">Korra</div>
+      <div class="auth-sub">Welcome back! Sign in to continue.</div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab-btn active">Log In</button>
+        <button class="auth-tab-btn" onclick="window.showScreen('screen-signup')">Sign Up</button>
+      </div>
+
+      <input type="email" id="login-email" class="auth-input" placeholder="Username, email or mobile number">
+      <input type="password" id="login-pass" class="auth-input" placeholder="Password">
+      <button id="btn-login-action" class="auth-btn-primary">Log In</button>
+
+      <div style="font-size:12px; color:#737373; margin:14px 0; cursor:pointer;">Forgot password?</div>
+      <div class="auth-divider">OR</div>
+
+      <button class="auth-btn-fb">
+        <svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> Continue with Facebook
+      </button>
+
+      <div style="font-size:12px; color:#737373; margin-top:20px;">
+        Don't have an account? <b style="color:#fff; cursor:pointer;" onclick="window.showScreen('screen-signup')">Sign up</b>
+      </div>
     </div>
+  </section>
 
-    <!-- Login -->
-    <form id="form-login">
-      <div class="input-group">
-        <input type="email" id="login-identifier" class="input-field" placeholder="Enter your email" required>
-      </div>
-      <div class="input-group">
-        <input type="password" id="login-password" class="input-field" placeholder="Password" required>
-      </div>
-      <button type="submit" class="action-btn" id="btn-login-submit">Log In</button>
-    </form>
+  <!-- 3. SIGN UP SCREEN -->
+  <section id="screen-signup" class="screen-view">
+    <div class="auth-container">
+      <div class="auth-brand">Korra</div>
+      <div class="auth-sub">Sign up to see photos and videos from your friends.</div>
 
-    <!-- Register Form -->
-    <form id="form-register" class="hidden">
-      <div class="input-group">
-        <input type="text" id="reg-name" class="input-field" placeholder="Full Name" required>
-      </div>
-      <div class="input-group">
-        <input type="text" id="reg-username" class="input-field" placeholder="Username (@username)" required>
-      </div>
-      <div class="input-group">
-        <input type="email" id="reg-email" class="input-field" placeholder="Email address" required>
-      </div>
-      <div class="input-group">
-        <input type="password" id="reg-password" class="input-field" placeholder="Create Password (min 6 chars)" required>
-      </div>
-      <button type="submit" class="action-btn" id="btn-register-submit">Create Account</button>
-    </form>
+      <button class="auth-btn-fb">
+        <svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> Continue with Facebook
+      </button>
 
-    <div class="feedback-msg" id="auth-feedback"></div>
-  </div>
-    <!-- Main App Screen -->
-  <div id="main-app" class="hidden">
-    <!-- Top Header -->
-    <header class="app-header" id="top-app-header">
-      <div class="logo">Koraa</div>
-      <div class="header-actions">
-        <i class="ri-heart-3-line" id="btn-open-notifs" title="Notifications"></i>
-        <!-- Direct Messages / Recent Chats List -->
-        <i class="ri-chat-3-line" id="btn-open-inbox" title="Messages"></i>
+      <div class="auth-divider">OR</div>
+
+      <input type="text" class="auth-input" placeholder="Mobile Number or Email">
+      <input type="text" class="auth-input" placeholder="Full Name">
+      <input type="email" id="signup-email" class="auth-input" placeholder="Username or Email">
+      <input type="password" id="signup-pass" class="auth-input" placeholder="Password">
+      <button id="btn-signup-action" class="auth-btn-primary">Sign Up</button>
+
+      <div style="font-size:12px; color:#737373; margin-top:20px;">
+        Already have an account? <b style="color:#fff; cursor:pointer;" onclick="window.showScreen('screen-login')">Log in</b>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. OTP VERIFICATION -->
+  <section id="screen-otp" class="screen-view">
+    <div class="auth-container">
+      <div class="auth-brand">Korra</div>
+      <div class="auth-sub">Enter the 6-digit code sent to your phone/email</div>
+
+      <div class="otp-inputs">
+        <input type="text" maxlength="1" class="otp-box">
+        <input type="text" maxlength="1" class="otp-box">
+        <input type="text" maxlength="1" class="otp-box">
+        <input type="text" maxlength="1" class="otp-box">
+        <input type="text" maxlength="1" class="otp-box">
+        <input type="text" maxlength="1" class="otp-box">
+      </div>
+
+      <div style="font-size:12px; color:#737373; margin-bottom:15px;">Didn't get code? Resend in 00:45</div>
+      <button class="auth-btn-primary" onclick="window.showScreen('screen-home')">Verify & Continue</button>
+    </div>
+  </section>
+
+  <!-- 5. HOME FEED SCREEN -->
+  <section id="screen-home" class="screen-view">
+    <header class="top-nav">
+      <div class="brand-name">Korra</div>
+      <div class="top-icons">
+        <button class="icon-action" onclick="window.showScreen('screen-notifications')"><i data-lucide="heart"></i></button>
+        <button class="icon-action" onclick="window.showScreen('screen-messages')"><i data-lucide="send"></i></button>
       </div>
     </header>
 
-    <div class="pages-wrapper">
-      <!-- 1. Home Feed -->
-      <section id="page-home" class="app-page active">
-        <div class="stories-slider" id="stories-container">
-          <div class="story-item" id="btn-open-camera-story">
-            <div class="story-ring add-ring"><i class="ri-camera-lens-line"></i></div>
-            <span class="story-name">Add Story</span>
-          </div>
+    <div class="stories-tray">
+      <div class="story-node" onclick="window.showScreen('screen-story-camera')">
+        <div class="story-border">
+          <img class="story-thumb" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">
         </div>
-        <div id="posts-feed" class="posts-stream">
-          <div class="empty-state">Loading posts...</div>
+        <span class="story-label">Your story</span>
+      </div>
+      <div class="story-node">
+        <div class="story-border">
+          <img class="story-thumb" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100">
         </div>
-      </section>
-
-      <!-- 2. Explore / Live User Search -->
-      <section id="page-explore" class="app-page">
-        <div style="padding: 12px 16px;">
-          <input type="text" id="live-user-search-input" class="input-field" placeholder="Search creators...">
+        <span class="story-label">riya_23</span>
+      </div>
+      <div class="story-node">
+        <div class="story-border">
+          <img class="story-thumb" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100">
         </div>
-        <div class="search-results-list" id="search-results-list"></div>
-      </section>
-
-      <!-- 3. Reels Section -->
-      <section id="page-reels" class="app-page">
-        <div id="reels-feed" style="height: calc(100vh - 120px); overflow-y: scroll; scroll-snap-type: y mandatory;">
-          <div class="empty-state">No reels uploaded yet.</div>
+        <span class="story-label">vikas_..</span>
+      </div>
+      <div class="story-node">
+        <div class="story-border">
+          <img class="story-thumb" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100">
         </div>
-      </section>
-
-      <!-- 4. MY PROFILE SECTION -->
-      <section id="page-profile" class="app-page">
-        <div class="profile-top-bar">
-          <b id="my-profile-handle-top" style="font-size:1.15rem;">@user</b>
-          <!-- Settings Icon on Profile Side -->
-          <i class="ri-settings-3-line" id="btn-open-settings" style="font-size: 1.5rem; cursor: pointer;"></i>
-        </div>
-
-        <div class="profile-header-clean">
-          <img src="https://picsum.photos/150/150" class="profile-avatar-clean" id="my-profile-pic">
-          <div class="profile-stats-row">
-            <div class="stat-item"><span class="stat-num" id="stat-posts">0</span><span class="stat-label">Posts</span></div>
-            <div class="stat-item"><span class="stat-num" id="stat-followers">0</span><span class="stat-label">Followers</span></div>
-            <div class="stat-item"><span class="stat-num" id="stat-following">0</span><span class="stat-label">Following</span></div>
-          </div>
-        </div>
-
-        <div class="profile-details-block">
-          <h3 class="profile-display-name" id="my-profile-name">User</h3>
-          <p class="profile-handle-tag" id="my-profile-username">@user</p>
-          <p class="profile-bio-text" id="my-profile-bio">Raoshab</p>
-        </div>
-
-        <div class="profile-cta-row">
-          <button class="btn-profile-primary" id="btn-open-edit-profile">Edit Profile</button>
-          <button class="btn-profile-secondary" id="btn-share-my-profile">
-            <i class="ri-share-forward-line"></i> Share Profile
-          </button>
-        </div>
-
-        <div class="user-posts-gallery" id="my-posts-grid"></div>
-      </section>
-    </div>
-
-    <!-- PROFILE SETTINGS SHEET (Dark Mode & Logout) -->
-    <div class="modal-overlay hidden" id="settings-sheet-modal">
-      <div class="settings-menu-sheet">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <h3>Settings</h3>
-          <i class="ri-close-line" id="btn-close-settings" style="font-size: 1.5rem; cursor: pointer;"></i>
-        </div>
-        
-        <div class="settings-item-row" id="btn-toggle-theme-row">
-          <span><i class="ri-moon-line"></i> Dark / Light Mode</span>
-          <i class="ri-toggle-line" id="theme-icon-state" style="font-size: 1.5rem;"></i>
-        </div>
-
-        <div class="settings-item-row logout" id="btn-logout-row">
-          <span><i class="ri-logout-box-r-line"></i> Log Out</span>
-          <i class="ri-arrow-right-s-line"></i>
-        </div>
+        <span class="story-label">sneha_..</span>
       </div>
     </div>
 
-    <!-- INBOX / DIRECT MESSAGE RECENT CHATS LIST -->
-    <div class="inbox-modal hidden" id="direct-inbox-modal">
-      <div class="chat-header">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <i class="ri-arrow-left-line" id="btn-close-inbox" style="font-size: 1.5rem; cursor: pointer;"></i>
-          <b>Messages</b>
-        </div>
-      </div>
-      <div class="inbox-list" id="inbox-conversations-list">
-        <div class="empty-state">No conversations yet. Message someone from their profile or search!</div>
-      </div>
+    <div id="posts-feed-container"></div>
+  </section>
+
+  <!-- 6. EXPLORE / SEARCH GRID -->
+  <section id="screen-explore" class="screen-view">
+    <div class="search-header">
+      <input type="text" class="search-bar-input" placeholder="🔍 Search Korra">
     </div>
-
-    <!-- PERSONAL 1-on-1 CHAT SCREEN -->
-    <div class="chat-window hidden" id="fullscreen-chat-modal">
-      <div class="chat-header">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <i class="ri-arrow-left-line" id="btn-close-chat" style="font-size: 1.5rem; cursor: pointer;"></i>
-          <div>
-            <b id="chat-header-title">@user</b>
-            <small id="chat-header-subtitle" style="display:block; font-size:0.72rem; color:var(--text-muted);">Personal Message</small>
-          </div>
-        </div>
-      </div>
-      <div class="chat-messages-area" id="chat-messages-area"></div>
-      <div class="chat-input-bar">
-        <input type="text" id="chat-text-input" placeholder="Message...">
-        <button class="chat-action-btn send" id="btn-send-msg"><i class="ri-send-plane-fill"></i></button>
-      </div>
+    <div class="grid-container">
+      <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300">
+      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300">
+      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300">
+      <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300">
+      <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300">
+      <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=300">
     </div>
-
-    <!-- OTHER USER PROFILE VIEW -->
-    <div class="other-profile-modal hidden" id="other-user-profile-modal">
-      <div class="chat-header">
-        <i class="ri-arrow-left-line" id="btn-close-other-profile" style="font-size: 1.5rem; cursor: pointer;"></i>
-        <b id="other-header-username">@user</b>
-        <div></div>
-      </div>
-
-      <div class="profile-header-clean">
-        <img src="https://picsum.photos/150/150" class="profile-avatar-clean" id="other-profile-pic">
-        <div class="profile-stats-row">
-          <div class="stat-item"><span class="stat-num" id="other-stat-posts">0</span><span class="stat-label">Posts</span></div>
-          <div class="stat-item"><span class="stat-num" id="other-stat-followers">0</span><span class="stat-label">Followers</span></div>
-          <div class="stat-item"><span class="stat-num" id="other-stat-following">0</span><span class="stat-label">Following</span></div>
-        </div>
-      </div>
-
-      <div class="profile-details-block">
-        <h3 class="profile-display-name" id="other-profile-name">User</h3>
-        <p class="profile-handle-tag" id="other-profile-handle">@user</p>
-        <p class="profile-bio-text" id="other-profile-bio">Bio</p>
-      </div>
-
-      <div class="profile-cta-row">
-        <button class="btn-profile-primary" id="btn-other-follow">Follow</button>
-        <button class="btn-profile-secondary" id="btn-other-personal-message">
-          <i class="ri-chat-3-line"></i> Message
-        </button>
-      </div>
-
-      <div class="user-posts-gallery" id="other-posts-grid"></div>
-    </div>
-
-    <!-- IN-APP CAMERA FOR DIRECT PHOTO / VIDEO SHOOT -->
-    <div class="camera-view-container hidden" id="in-app-camera-modal">
-      <video id="live-camera-video" class="camera-preview-tag" autoplay playsinline muted></video>
-      <canvas id="camera-frame-canvas" class="hidden"></canvas>
-
-      <div class="camera-header-hud">
-        <i class="ri-close-line" id="btn-close-camera" style="cursor:pointer;"></i>
-        <span id="camera-status-badge" style="font-size:0.9rem; background:rgba(0,0,0,0.5); padding:4px 12px; border-radius:14px;">Tap: Photo</span>
-      </div>
-
-      <div class="camera-footer-hud">
-        <button id="btn-cam-mode-toggle" class="btn-profile-secondary" style="flex:0; padding:6px 14px; font-size:0.8rem; border-radius:14px;">Story Mode</button>
-        <div class="camera-trigger-button" id="btn-capture-media"><span></span></div>
-        <div style="width:60px;"></div>
-      </div>
-    </div>
-
-    <!-- STORY VIEWER (Tap Header opens user profile) -->
-    <div class="modal-overlay hidden" id="story-viewer-modal" style="background:#000;">
-      <div id="story-progress-container" style="position: absolute; top: 12px; left: 0; width: 100%; padding: 0 10px; display: flex; gap: 6px; z-index: 210;"></div>
+  </section>
+    <!-- ==========================================
+       7. REELS (9:16 FEED)
+  =========================================== -->
+  <section id="screen-reels" class="screen-view">
+    <div class="reels-viewport">
+      <img class="reels-video" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700">
       
-      <div id="story-user-touch-profile" style="position: absolute; top: 24px; left: 14px; display: flex; align-items: center; gap: 10px; z-index: 220; cursor: pointer;">
-        <img id="story-viewer-avatar" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fff;">
-        <div>
-          <span id="story-viewer-username" style="font-weight: 700; font-size: 0.92rem; color: #fff; display:block;">Username</span>
-          <small style="color:#ddd; font-size:0.75rem;">View Profile &rsaquo;</small>
+      <div class="reels-overlay-bottom">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80" style="width:32px;height:32px;border-radius:50%;">
+          <b>@travel.diaries</b>
+          <button style="background:none; border:1px solid #fff; color:#fff; padding:3px 8px; border-radius:4px; font-size:11px;">Follow</button>
         </div>
+        <p style="font-size:12px;">Feeling the sunset vibes ✨ #reels #korra</p>
       </div>
 
-      <i class="ri-close-line" id="btn-close-story-viewer" style="position:absolute; top:20px; right:16px; z-index:220; color:#fff; font-size:1.6rem; cursor:pointer;"></i>
-      <img id="story-viewer-img" style="width:100%; height:100%; object-fit:contain;">
-    </div>
-
-    <!-- EDIT PROFILE MODAL (With Live Photo Preview Tag) -->
-    <div class="modal-overlay hidden" id="edit-profile-modal">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h3>Edit Profile</h3>
-          <i class="ri-close-line" id="btn-close-edit-profile" style="font-size:1.5rem; cursor:pointer;"></i>
-        </div>
-        <div style="display:flex; justify-content:center; margin-bottom:14px;">
-          <img id="edit-avatar-preview" src="https://picsum.photos/150/150" style="width:84px; height:84px; border-radius:50%; object-fit:cover; border:2px solid var(--border-color);">
-        </div>
-        <div class="input-group">
-          <input type="text" id="edit-name" class="input-field" placeholder="Full Name">
-        </div>
-        <div class="input-group">
-          <input type="text" id="edit-bio" class="input-field" placeholder="Bio">
-        </div>
-        <div class="input-group">
-          <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; display:block;">Select New Profile Photo:</label>
-          <input type="file" id="edit-avatar-input" accept="image/*" class="input-field">
-        </div>
-        <button class="action-btn" id="btn-save-profile">Save Changes</button>
+      <div class="reels-overlay-right">
+        <div style="text-align:center;"><i data-lucide="heart"></i><br><small>128K</small></div>
+        <div style="text-align:center;" onclick="window.showScreen('screen-comments')"><i data-lucide="message-circle"></i><br><small>1.2K</small></div>
+        <div style="text-align:center;"><i data-lucide="send"></i><br><small>Share</small></div>
+        <div><i data-lucide="more-vertical"></i></div>
       </div>
     </div>
+  </section>
 
-    <!-- Bottom Navigation Bar -->
-    <nav class="bottom-nav" id="main-bottom-nav">
-      <i class="ri-home-5-fill nav-item active" data-page="page-home"></i>
-      <i class="ri-search-line nav-item" data-page="page-explore"></i>
-      <i class="ri-camera-line nav-item" id="btn-open-camera-shoot" title="Shoot Photo/Video"></i>
-      <i class="ri-movie-line nav-item" data-page="page-reels"></i>
-      <i class="ri-user-3-line nav-item" data-page="page-profile"></i>
-    </nav>
-  </div>
-</div>
+  <!-- ==========================================
+       8. PROFILE SCREEN
+  =========================================== -->
+  <section id="screen-profile" class="screen-view">
+    <header class="top-nav">
+      <div style="display:flex; align-items:center; gap:6px;">
+        <span class="brand-name current-username-tag" style="font-size:18px;">tarun_rao07</span>
+        <i data-lucide="chevron-down" style="width:16px;"></i>
+      </div>
+      <div class="top-icons">
+        <button class="icon-action" onclick="document.getElementById('global-file-input').click()"><i data-lucide="plus-square"></i></button>
+        <button class="icon-action" onclick="window.showScreen('screen-settings')"><i data-lucide="menu"></i></button>
+      </div>
+    </header>
 
-<script type="module" src="app.js"></script>
+    <div class="profile-meta-top">
+      <img class="profile-avatar-lg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200">
+      <div class="stat-item"><b>0</b><span>Posts</span></div>
+      <div class="stat-item" onclick="window.showScreen('screen-followers')"><b>1,924</b><span>Followers</span></div>
+      <div class="stat-item" onclick="window.showScreen('screen-following')"><b>457</b><span>Following</span></div>
+    </div>
+
+    <div class="profile-bio-box">
+      <b class="current-username-tag">Tarun Rao</b>
+      <p>Dream • Build • Grow 🚀</p>
+    </div>
+
+    <div class="profile-action-btns">
+      <button class="btn-profile-sub" onclick="window.showScreen('screen-edit-profile')">Edit profile</button>
+      <button class="btn-profile-sub" onclick="window.showScreen('screen-qr')">Share profile</button>
+    </div>
+
+    <div class="grid-container"></div>
+  </section>
+
+  <!-- ==========================================
+       9. EDIT PROFILE
+  =========================================== -->
+  <section id="screen-edit-profile" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-profile')"><i data-lucide="x"></i></button>
+      <b>Edit profile</b>
+      <button class="icon-action" onclick="window.showScreen('screen-profile')"><i data-lucide="check" style="color:#0095f6;"></i></button>
+    </header>
+    <div style="text-align:center; padding:20px;">
+      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" style="width:72px; height:72px; border-radius:50%;">
+      <div style="color:#0095f6; font-size:13px; font-weight:600; margin-top:8px;">Change profile photo</div>
+    </div>
+    <div style="padding:0 16px;">
+      <label style="color:#777; font-size:12px;">Name</label>
+      <input type="text" class="auth-input" value="Tarun Rao">
+      <label style="color:#777; font-size:12px;">Username</label>
+      <input type="text" class="auth-input current-username-tag" value="tarun_rao_07">
+      <label style="color:#777; font-size:12px;">Bio</label>
+      <input type="text" class="auth-input" value="Dream • Build • Grow">
+    </div>
+  </section>
+
+  <!-- ==========================================
+       10. CREATE POST
+  =========================================== -->
+  <section id="screen-create-post" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-home')"><i data-lucide="x"></i></button>
+      <b>New Post</b>
+      <button class="icon-action" onclick="document.getElementById('global-file-input').click()"><b style="color:#0095f6;">Next</b></button>
+    </header>
+    <div style="text-align:center; padding:60px 20px;">
+      <i data-lucide="image" style="width:64px; height:64px; color:#555;"></i>
+      <p style="margin-top:14px;">Select photos from gallery to share on Korra</p>
+      <button class="auth-btn-primary" style="margin-top:20px;" onclick="document.getElementById('global-file-input').click()">Choose from Phone</button>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       11. STORY CAMERA
+  =========================================== -->
+  <section id="screen-story-camera" class="screen-view">
+    <header class="top-nav" style="background:transparent; position:absolute; width:100%;">
+      <button class="icon-action" onclick="window.showScreen('screen-home')"><i data-lucide="x"></i></button>
+      <div class="top-icons">
+        <i data-lucide="music"></i>
+        <i data-lucide="sparkles"></i>
+      </div>
+    </header>
+    <div style="height:100vh; background:#1c1c1c; display:flex; align-items:flex-end; justify-content:center; padding-bottom:50px;">
+      <div style="width:70px; height:70px; border-radius:50%; border:4px solid #fff; display:flex; align-items:center; justify-content:center;" onclick="document.getElementById('global-file-input').click()">
+        <div style="width:54px; height:54px; border-radius:50%; background:#fff;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       12. REEL CREATE
+  =========================================== -->
+  <section id="screen-reel-create" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-home')"><i data-lucide="x"></i></button>
+      <b>Create Reel</b>
+    </header>
+    <div style="padding:20px;">
+      <div class="settings-item"><div class="settings-item-left"><i data-lucide="video"></i> Edit Video</div><i data-lucide="chevron-right"></i></div>
+      <div class="settings-item"><div class="settings-item-left"><i data-lucide="music"></i> Add Audio</div><i data-lucide="chevron-right"></i></div>
+      <div class="settings-item"><div class="settings-item-left"><i data-lucide="type"></i> Add Text</div><i data-lucide="chevron-right"></i></div>
+      <button class="auth-btn-primary" style="margin-top:30px;" onclick="document.getElementById('global-file-input').click()">Select Video</button>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       13. LIVE SCREEN
+  =========================================== -->
+  <section id="screen-live" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-home')"><i data-lucide="x"></i></button>
+      <b>Korra Live</b>
+    </header>
+    <div style="text-align:center; padding:100px 20px;">
+      <div style="width:80px; height:80px; border-radius:50%; background:linear-gradient(45deg,#f09433,#dc2743); margin:0 auto; display:flex; align-items:center; justify-content:center;">
+        <i data-lucide="radio" style="width:36px; height:36px;"></i>
+      </div>
+      <h3 style="margin-top:20px;">Go Live on Korra</h3>
+      <button class="auth-btn-primary" style="margin-top:30px; background:#dc2743;" onclick="alert('Camera Starting Live Broadcast...')">Start Live</button>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       14. MESSAGES / DM SCREEN
+  =========================================== -->
+  <section id="screen-messages" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-home')"><i data-lucide="arrow-left"></i></button>
+      <b class="current-username-tag">Direct Messages</b>
+      <button class="icon-action" onclick="window.showScreen('screen-group-chat')"><i data-lucide="edit"></i></button>
+    </header>
+    <div class="search-header">
+      <input type="text" class="search-bar-input" placeholder="🔍 Search chat">
+    </div>
+    <div class="chat-row" onclick="window.showScreen('screen-chat')">
+      <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100">
+      <div style="flex:1;">
+        <b>Pooja</b>
+        <div style="font-size:12px; color:#3797f0;">Active now</div>
+      </div>
+      <i data-lucide="camera" style="color:#777;"></i>
+    </div>
+    <div class="chat-row" onclick="window.showScreen('screen-chat')">
+      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100">
+      <div style="flex:1;">
+        <b>Rohit</b>
+        <div style="font-size:12px; color:#777;">Sent 2h ago</div>
+      </div>
+      <i data-lucide="camera" style="color:#777;"></i>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       15. CHAT CONVERSATION SCREEN
+  =========================================== -->
+  <section id="screen-chat" class="screen-view">
+    <header class="top-nav">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button class="icon-action" onclick="window.showScreen('screen-messages')"><i data-lucide="arrow-left"></i></button>
+        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" style="width:32px; height:32px; border-radius:50%;">
+        <b>Pooja</b>
+      </div>
+      <div class="top-icons">
+        <button class="icon-action" onclick="window.showScreen('screen-audio-call')"><i data-lucide="phone"></i></button>
+        <button class="icon-action" onclick="window.showScreen('screen-video-call')"><i data-lucide="video"></i></button>
+      </div>
+    </header>
+    <div style="display:flex; flex-direction:column; padding-top:20px;">
+      <div class="chat-bubble-peer">Hey! Kya kar rahi ho?</div>
+      <div class="chat-bubble-user">Bas Korra app use kar raha hu! Tum?</div>
+      <div class="chat-bubble-peer">Good night! Kal milte hain?</div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       16. VIDEO CALL SCREEN
+  =========================================== -->
+  <section id="screen-video-call" class="screen-view">
+    <div class="call-screen-view">
+      <div style="text-align:center;">
+        <img class="call-avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200">
+        <h2 style="margin-top:14px;">Pooja</h2>
+        <p style="color:#0095f6;">Video calling...</p>
+      </div>
+      <div class="call-actions-bar">
+        <button class="btn-call-round btn-call-util"><i data-lucide="mic"></i></button>
+        <button class="btn-call-round btn-hangup" onclick="window.showScreen('screen-chat')"><i data-lucide="phone-off"></i></button>
+        <button class="btn-call-round btn-call-util"><i data-lucide="video"></i></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       17. AUDIO CALL SCREEN
+  =========================================== -->
+  <section id="screen-audio-call" class="screen-view">
+    <div class="call-screen-view">
+      <div style="text-align:center;">
+        <img class="call-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200">
+        <h2 style="margin-top:14px;">Rohit</h2>
+        <p style="color:#777;">Calling...</p>
+      </div>
+      <div class="call-actions-bar">
+        <button class="btn-call-round btn-call-util"><i data-lucide="mic"></i></button>
+        <button class="btn-call-round btn-hangup" onclick="window.showScreen('screen-chat')"><i data-lucide="phone-off"></i></button>
+        <button class="btn-call-round btn-call-util"><i data-lucide="volume-2"></i></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       18. GROUP CHAT SCREEN
+  =========================================== -->
+  <section id="screen-group-chat" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-messages')"><i data-lucide="arrow-left"></i></button>
+      <b>Best Friends (5 members)</b>
+      <i data-lucide="info"></i>
+    </header>
+    <div style="padding:16px;">
+      <div class="chat-row"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80"><div><b>Aman</b><br><small style="color:#777;">Rohit ko add karo</small></div></div>
+      <div class="chat-row"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80"><div><b>Rohit</b><br><small style="color:#777;">Kal plan banaye?</small></div></div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       19. LIKES LIST SCREEN
+  =========================================== -->
+  <section id="screen-likes" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-home')"><i data-lucide="arrow-left"></i></button>
+      <b>Likes</b>
+    </header>
+    <div style="padding:10px 16px;">
+      <div class="chat-row"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80"><div><b>pooja_19</b> liked your post. <small style="color:#777;">2m</small></div></div>
+      <div class="chat-row"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80"><div><b>rahul_07</b> liked your post. <small style="color:#777;">10m</small></div></div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       20. COMMENTS SCREEN
+  =========================================== -->
+  <section id="screen-comments" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-home')"><i data-lucide="arrow-left"></i></button>
+      <b>Comments</b>
+      <i data-lucide="send"></i>
+    </header>
+    <div style="padding:16px;"></div>
+  </section>
+    <!-- ==========================================
+       21. FOLLOWERS SCREEN
+  =========================================== -->
+  <section id="screen-followers" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-profile')"><i data-lucide="arrow-left"></i></button>
+      <b>Followers</b>
+    </header>
+    <div style="padding:16px;">
+      <div class="chat-row"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80"><div style="flex:1;"><b>pooja_19</b></div><button class="btn-profile-sub">Remove</button></div>
+      <div class="chat-row"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80"><div style="flex:1;"><b>sahil_kumar</b></div><button class="btn-profile-sub">Remove</button></div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       22. FOLLOWING SCREEN
+  =========================================== -->
+  <section id="screen-following" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-profile')"><i data-lucide="arrow-left"></i></button>
+      <b>Following</b>
+    </header>
+    <div style="padding:16px;">
+      <div class="chat-row"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80"><div style="flex:1;"><b>aman_07</b></div><button class="btn-profile-sub">Following</button></div>
+      <div class="chat-row"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80"><div style="flex:1;"><b>rahul_07</b></div><button class="btn-profile-sub">Following</button></div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       23. NOTIFICATIONS SCREEN
+  =========================================== -->
+  <section id="screen-notifications" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-home')"><i data-lucide="arrow-left"></i></button>
+      <b>Notifications</b>
+    </header>
+    <div style="padding:16px;">
+      <div class="settings-item"><div class="settings-item-left"><i data-lucide="heart"></i> Likes</div><i data-lucide="chevron-right"></i></div>
+      <div class="settings-item"><div class="settings-item-left"><i data-lucide="message-circle"></i> Comments</div><i data-lucide="chevron-right"></i></div>
+      <div class="settings-item"><div class="settings-item-left"><i data-lucide="user-plus"></i> New Followers</div><i data-lucide="chevron-right"></i></div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       24. SAVED POSTS SCREEN
+  =========================================== -->
+  <section id="screen-saved" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-settings')"><i data-lucide="arrow-left"></i></button>
+      <b>Saved</b>
+    </header>
+    <div class="grid-container">
+      <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300">
+      <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300">
+    </div>
+  </section>
+
+  <!-- ==========================================
+       25. ARCHIVE SCREEN
+  =========================================== -->
+  <section id="screen-archive" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-settings')"><i data-lucide="arrow-left"></i></button>
+      <b>Archive</b>
+    </header>
+    <div style="padding:16px;">
+      <div class="settings-item"><div class="settings-item-left"><i data-lucide="clock"></i> Stories Archive</div><i data-lucide="chevron-right"></i></div>
+      <div class="settings-item"><div class="settings-item-left"><i data-lucide="image"></i> Posts Archive</div><i data-lucide="chevron-right"></i></div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       26. YOUR ACTIVITY SCREEN
+  =========================================== -->
+  <section id="screen-activity" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-settings')"><i data-lucide="arrow-left"></i></button>
+      <b>Your Activity</b>
+    </header>
+    <div style="padding:16px;">
+      <div class="settings-item"><div class="settings-item-left"><i data-lucide="heart"></i> Likes</div><i data-lucide="chevron-right"></i></div>
+      <div class="settings-item"><div class="settings-item-left"><i data-lucide="message-circle"></i> Comments</div><i data-lucide="chevron-right"></i></div>
+      <div class="settings-item"><div class="settings-item-left"><i data-lucide="history"></i> Recently Deleted</div><i data-lucide="chevron-right"></i></div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       27. QR CODE SCREEN
+  =========================================== -->
+  <section id="screen-qr" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-profile')"><i data-lucide="x"></i></button>
+      <b>QR Code</b>
+    </header>
+    <div style="text-align:center; padding:80px 20px;">
+      <div style="width:200px; height:200px; background:#fff; margin:0 auto; padding:10px; border-radius:14px;">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=KorraProfile" style="width:100%; height:100%;">
+      </div>
+      <h3 style="margin-top:20px;" class="current-username-tag">tarun_rao_07</h3>
+      <p style="color:#777; font-size:12px;">Scan this QR to follow on Korra</p>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       28. SETTINGS & ACTIVITY SCREEN
+  =========================================== -->
+  <section id="screen-settings" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-profile')"><i data-lucide="arrow-left"></i></button>
+      <b>Settings and activity</b>
+    </header>
+    <div style="padding:16px;">
+      <div class="settings-item" onclick="window.showScreen('screen-accounts-center')"><div class="settings-item-left"><i data-lucide="user"></i> Accounts Center</div><i data-lucide="chevron-right"></i></div>
+      <div class="settings-item" onclick="window.showScreen('screen-privacy')"><div class="settings-item-left"><i data-lucide="lock"></i> Privacy</div><i data-lucide="chevron-right"></i></div>
+      <div class="settings-item" onclick="window.showScreen('screen-security')"><div class="settings-item-left"><i data-lucide="shield"></i> Security</div><i data-lucide="chevron-right"></i></div>
+      <div class="settings-item" onclick="window.showScreen('screen-theme')"><div class="settings-item-left"><i data-lucide="moon"></i> Theme</div><i data-lucide="chevron-right"></i></div>
+      <div class="settings-item" onclick="window.showScreen('screen-other-settings')"><div class="settings-item-left"><i data-lucide="sliders"></i> Other Settings</div><i data-lucide="chevron-right"></i></div>
+      <div class="settings-item" id="btn-logout-action"><div class="settings-item-left" style="color:#ff2d55;"><i data-lucide="log-out"></i> Log out</div></div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       29. PRIVACY SCREEN
+  =========================================== -->
+  <section id="screen-privacy" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-settings')"><i data-lucide="arrow-left"></i></button>
+      <b>Privacy</b>
+    </header>
+    <div style="padding:16px;">
+      <div class="settings-item"><div class="settings-item-left">Account Privacy (Public/Private)</div><i data-lucide="chevron-right"></i></div>
+      <div class="settings-item"><div class="settings-item-left">Blocked Accounts</div><i data-lucide="chevron-right"></i></div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       30. SECURITY SCREEN
+  =========================================== -->
+  <section id="screen-security" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-settings')"><i data-lucide="arrow-left"></i></button>
+      <b>Security</b>
+    </header>
+    <div style="padding:16px;">
+      <div class="settings-item"><div class="settings-item-left">Password</div><i data-lucide="chevron-right"></i></div>
+      <div class="settings-item"><div class="settings-item-left">Two-factor Authentication</div><i data-lucide="chevron-right"></i></div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       31. ACCOUNT CENTER
+  =========================================== -->
+  <section id="screen-accounts-center" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-settings')"><i data-lucide="arrow-left"></i></button>
+      <b>Accounts Center</b>
+    </header>
+    <div style="padding:16px;">
+      <div class="settings-item" onclick="window.showScreen('screen-personal-info')"><div class="settings-item-left">Personal Details</div><i data-lucide="chevron-right"></i></div>
+      <div class="settings-item"><div class="settings-item-left">Password and Security</div><i data-lucide="chevron-right"></i></div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       32. PERSONAL INFORMATION
+  =========================================== -->
+  <section id="screen-personal-info" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-accounts-center')"><i data-lucide="arrow-left"></i></button>
+      <b>Personal details</b>
+    </header>
+    <div style="padding:16px;">
+      <div class="settings-item"><div class="settings-item-left">Contact Info</div><b>test@gmail.com</b></div>
+      <div class="settings-item"><div class="settings-item-left">Birthday</div><b>1 Jan 2000</b></div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       33. THEME SCREEN
+  =========================================== -->
+  <section id="screen-theme" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-settings')"><i data-lucide="arrow-left"></i></button>
+      <b>Theme</b>
+    </header>
+    <div style="padding:16px;">
+      <div class="settings-item"><div class="settings-item-left">System default</div><input type="radio" name="th"></div>
+      <div class="settings-item"><div class="settings-item-left">Dark mode</div><input type="radio" name="th" checked></div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       34. HELP SCREEN
+  =========================================== -->
+  <section id="screen-help" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-settings')"><i data-lucide="arrow-left"></i></button>
+      <b>Help</b>
+    </header>
+    <div style="padding:16px;">
+      <div class="settings-item"><div class="settings-item-left">Help Center</div><i data-lucide="chevron-right"></i></div>
+      <div class="settings-item"><div class="settings-item-left">Report a problem</div><i data-lucide="chevron-right"></i></div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       35. OTHER SETTINGS
+  =========================================== -->
+  <section id="screen-other-settings" class="screen-view">
+    <header class="top-nav">
+      <button class="icon-action" onclick="window.showScreen('screen-settings')"><i data-lucide="arrow-left"></i></button>
+      <b>Additional settings</b>
+    </header>
+    <div style="padding:16px;">
+      <div class="settings-item"><div class="settings-item-left">Upload highest quality</div><input type="checkbox" checked></div>
+      <div class="settings-item"><div class="settings-item-left">Data saver</div><input type="checkbox"></div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       MASTER BOTTOM NAVIGATION BAR
+  =========================================== -->
+  <nav id="master-bottom-bar" class="master-bottom-bar" style="display:none;">
+    <button class="nav-tab-node active" onclick="window.switchTab('screen-home', this)">
+      <i data-lucide="home"></i>
+    </button>
+    <button class="nav-tab-node" onclick="window.switchTab('screen-explore', this)">
+      <i data-lucide="search"></i>
+    </button>
+    <button class="nav-tab-node" onclick="document.getElementById('global-file-input').click()">
+      <i data-lucide="plus-square"></i>
+    </button>
+    <button class="nav-tab-node" onclick="window.switchTab('screen-reels', this)">
+      <i data-lucide="clapperboard"></i>
+    </button>
+    <button class="nav-tab-node" onclick="window.switchTab('screen-profile', this)">
+      <img class="nav-tab-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">
+    </button>
+  </nav>
+
+  <!-- Core JavaScript Module -->
+  <script type="module" src="app.js"></script>
 </body>
 </html>

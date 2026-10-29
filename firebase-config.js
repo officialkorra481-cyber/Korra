@@ -1,4 +1,3 @@
-// firebase-config.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { 
   getAuth, 
@@ -9,21 +8,27 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { 
   getFirestore, 
+  collection, 
   doc, 
   setDoc, 
   getDoc, 
   addDoc, 
-  deleteDoc, 
-  collection, 
-  query, 
+  deleteDoc,
   onSnapshot, 
+  query, 
+  orderBy, 
   updateDoc, 
   arrayUnion, 
   arrayRemove, 
   serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { 
+  getStorage, 
+  ref, 
+  uploadBytesResumable, 
+  getDownloadURL 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-// Aapke Firebase Project ki Real Config Details
 const firebaseConfig = {
   apiKey: "AIzaSyD1SY_t_qQp8BJaoWFoprW60wDJadeUK6E",
   authDomain: "korra-e92a3.firebaseapp.com",
@@ -35,29 +40,33 @@ const firebaseConfig = {
   measurementId: "G-13H7F3HG1S"
 };
 
-// Firebase Initialize
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
-// Export for app.js
 export { 
   auth, 
   db, 
+  storage, 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signOut, 
   onAuthStateChanged,
+  collection, 
   doc, 
   setDoc, 
   getDoc, 
   addDoc, 
-  deleteDoc, 
-  collection, 
-  query, 
+  deleteDoc,
   onSnapshot, 
+  query, 
+  orderBy, 
   updateDoc, 
   arrayUnion, 
   arrayRemove, 
-  serverTimestamp 
+  serverTimestamp, 
+  ref, 
+  uploadBytesResumable, 
+  getDownloadURL 
 };
